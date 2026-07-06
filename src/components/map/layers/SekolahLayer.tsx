@@ -81,8 +81,8 @@ export default function sekolahLayer(){
     const [selectedAsset, setSelectedAsset] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const sekolahFile = "/data/akses4326/sekolah.geojson";
-
+    // const sekolahFile = "/data/akses4326/sekolah.geojson";
+    const sekolahFile = "/data/akses4326/pendidikan.geojson";
     const bufferFiles = [
         "/data/akses4326/service_area_5_menit.geojson",
         "/data/akses4326/service_area_10_menit.geojson",

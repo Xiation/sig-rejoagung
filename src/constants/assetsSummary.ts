@@ -45,7 +45,7 @@ export const assetsSummary = [
 ];
 
 export const categoryData = [
-    { nama: "Fasilitas Pendidikan", jumlah: 10, luas: "5,371", persen: 45.5, color: "#10b981" },
+    { nama: "Fasilitas Pendidikan", jumlah: 11, luas: "5,371", persen: 45.5, color: "#10b981" },
   { nama: "Fasilitas Keagamaan", jumlah: 9, luas: "6,291", persen: 40.9, color: "#2563eb" },
   { nama: "Olahraga", jumlah: 2, luas: "10,192", persen: 9.1, color: "#8b5cf6" },
   { nama: "Fasilitas Pemerintahan", jumlah: 1, luas: "0", persen: 4.5, color: "#ea580c" },

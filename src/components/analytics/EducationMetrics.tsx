@@ -15,10 +15,10 @@ import {
 // Dihitung manual dari sekolah.geojson (8 features)
 const tierData = [
   { jenjang: "TK", jumlah: 1, color: "#ec4899" },
-  { jenjang: "SD", jumlah: 2, color: "#ef4444" },
-  { jenjang: "SMP", jumlah: 1, color: "#3b82f6" },
+  { jenjang: "SD", jumlah: 3, color: "#ef4444" },
+  { jenjang: "SMP", jumlah: 2, color: "#3b82f6" },
   { jenjang: "SMK", jumlah: 1, color: "#eab308" },
-  { jenjang: "Pesantren", jumlah: 3, color: "#8b5cf6" },
+  { jenjang: "Pesantren", jumlah: 4, color: "#8b5cf6" },
 ];
 
 // DUMMY — akan diupdate ketika data akreditasi asli tersedia
@@ -26,23 +26,41 @@ const akreditasiData = [
   { status: "A (Unggul)", jumlah: 2, color: "#10b981" },
   { status: "B (Baik Sekali)", jumlah: 3, color: "#3b82f6" },
   { status: "C (Baik)", jumlah: 1, color: "#f59e0b" },
-  { status: "Belum Terakreditasi", jumlah: 2, color: "#9ca3af" },
+  { status: "Belum Terakreditasi", jumlah: 5, color: "#9ca3af" },
 ];
 
 // Berdasarkan hasil network analysis service area
-const travelTimeData = [
-  { sekolah: "SMK NU Darussalam", zona: "< 5 Menit" },
-  { sekolah: "Ponpes Salaf Darussalam", zona: "< 5 Menit" },
-  { sekolah: "SMP AL-Amiriyyah", zona: "< 5 Menit" },
-  { sekolah: "Ponpes Darussalam", zona: "5–10 Menit" },
-  { sekolah: "SD Negeri 1 Rejoagung", zona: "5–10 Menit" },
-  { sekolah: "SD Negeri 2 Rejoagung", zona: "5–10 Menit" },
-  { sekolah: "TK Khadijah 203 Rejoagung", zona: "5–10 Menit" },
-  { sekolah: "Ponpes Manbaul Ulum", zona: "> 10 Menit" },
-];
+const travelTimeData = [                                                 
+      { sekolah: "SMK NU Darussalam", zona: "< 5 Menit" },                   
+      { sekolah: "Pondok Pesantren Salaf Darussalam", zona: "< 5 Menit" },   
+      { sekolah: "SMP Al Amiriyyah", zona: "< 5 Menit" },                    
+      { sekolah: "SDN 1 Rejoagung Srono", zona: "5–10 Menit" },              
+      { sekolah: "SD N 2 Rejoagung", zona: "5–10 Menit" },                   
+      { sekolah: "TK Khadijah 203 Rejoagung", zona: "5–10 Menit" },          
+      { sekolah: "MTs Unggulan Darussalam", zona: "5–10 Menit" },            
+      { sekolah: "Pondok Pesantren Darussalam", zona: "5–10 Menit" },        
+      { sekolah: "Pondok Pesantren Al Falah Rejoagung", zona: "> 10 Menit" },
+      { sekolah: "Ponpes manbaul alam", zona: "> 10 Menit" }, 
+      { sekolah: "MI Al Ma'arif Rejoagung", zona: "> 10 Menit" },                     
+    ];     
 
-// DUMMY — estimasi berdasarkan service area coverage
-const coverageIndex = 73;
+// estimasi berdasarkan service area coverage
+// ### 1. Zona Sangat Dekat (< 5 Menit)                                       
+                                                                             
+//   • Perhitungan: (1.043.580,97 ÷ 4.255.282,09) × 100%                        
+//   • Hasil: 24,52%                                                            
+                                                                             
+//   ### 2. Zona Aman (< 10 Menit)                                              
+                                                                             
+//   • Perhitungan: (2.911.421,44 ÷ 4.255.282,09) × 100%                        
+//   • Hasil: 68,42% (Wow, angkanya ternyata sangat dekat dengan tebakan dummy  
+//   73% kita di awal!)                                                         
+                                                                             
+//   ### 3. Zona Sedang (< 15 Menit)                                            
+                                                                             
+//   • Perhitungan: (3.628.315,28 ÷ 4.255.282,09) × 100%                        
+//   • Hasil: 85,27%        
+const coverageIndex = 68.4;
 
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
 
@@ -54,7 +72,7 @@ export default function EducationMetrics() {
         <CardContent className="p-6 flex items-center gap-6">
           <span className="text-5xl">🏫</span>
           <div>
-            <p className="text-5xl font-bold text-gray-900">8</p>
+            <p className="text-5xl font-bold text-gray-900">11</p>
             <p className="text-lg text-gray-600 mt-1">
               Lembaga Pendidikan Terdata di Desa Rejoagung
             </p>
@@ -215,8 +233,9 @@ export default function EducationMetrics() {
             />
           </div>
           <p className="text-xs text-gray-400">
-            Dihitung berdasarkan hasil Network Analysis Service Area (5 & 10 Menit) dari Tim Geodesi KKN-PPM UGM 2026.
-            Nilai akan diperbarui setelah validasi lapangan selesai.
+            Dihitung berdasarkan hasil Network Analysis Service Area (10 
+            Menit) dengan luas total Desa Rejoagung 4,25 juta m² (Tim Geodesi KKN-PPM  
+            UGM 2026).
           </p>
         </CardContent>
       </Card>
