@@ -1,0 +1,15 @@
+{
+"type": "FeatureCollection",
+"name": "fasilitas pendidikan",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "NAMOBJ": "SMK NU Darussalam", "LUAS": null, "KATPDK": null, "JLPDDK": null, "FGGPDK": null, "REMARK": null, "FCODE": null, "SRS_ID": null, "LCODE": null, "METADATA": null, "JJGPDF": null, "JNSPDL": null }, "geometry": { "type": "Point", "coordinates": [ 114.305081097490657, -8.37953977921658, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "Pondok Pesantren Salaf Darussalam", "LUAS": null, "KATPDK": null, "JLPDDK": null, "FGGPDK": null, "REMARK": null, "FCODE": null, "SRS_ID": null, "LCODE": null, "METADATA": null, "JJGPDF": null, "JNSPDL": null }, "geometry": { "type": "Point", "coordinates": [ 114.305835897563213, -8.379989660054513, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "SMP AL-Amiriyyah", "LUAS": null, "KATPDK": null, "JLPDDK": null, "FGGPDK": null, "REMARK": null, "FCODE": null, "SRS_ID": null, "LCODE": null, "METADATA": null, "JJGPDF": null, "JNSPDL": null }, "geometry": { "type": "Point", "coordinates": [ 114.306223294951437, -8.379852196465148, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "Pondok Pesantren Darussalam", "LUAS": null, "KATPDK": null, "JLPDDK": null, "FGGPDK": null, "REMARK": null, "FCODE": null, "SRS_ID": null, "LCODE": null, "METADATA": null, "JJGPDF": null, "JNSPDL": null }, "geometry": { "type": "Point", "coordinates": [ 114.306503845640592, -8.380958153525079, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "SD Negeri 1 Rejoagung", "LUAS": null, "KATPDK": null, "JLPDDK": null, "FGGPDK": null, "REMARK": null, "FCODE": null, "SRS_ID": null, "LCODE": null, "METADATA": null, "JJGPDF": null, "JNSPDL": null }, "geometry": { "type": "Point", "coordinates": [ 114.302374939283496, -8.384897110195004, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "SD Negeri 2 Rejoagung", "LUAS": null, "KATPDK": null, "JLPDDK": null, "FGGPDK": null, "REMARK": null, "FCODE": null, "SRS_ID": null, "LCODE": null, "METADATA": null, "JJGPDF": null, "JNSPDL": null }, "geometry": { "type": "Point", "coordinates": [ 114.306856252296924, -8.38379990081804, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "TK Khadijah 203 Rejoagung", "LUAS": null, "KATPDK": null, "JLPDDK": null, "FGGPDK": null, "REMARK": null, "FCODE": null, "SRS_ID": null, "LCODE": null, "METADATA": null, "JJGPDF": null, "JNSPDL": null }, "geometry": { "type": "Point", "coordinates": [ 114.309431195259634, -8.379066154667745, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "Yayasan Pondok Pesantren Manbaul Ulum", "LUAS": null, "KATPDK": null, "JLPDDK": null, "FGGPDK": null, "REMARK": null, "FCODE": null, "SRS_ID": null, "LCODE": null, "METADATA": null, "JJGPDF": null, "JNSPDL": null }, "geometry": { "type": "Point", "coordinates": [ 114.303484020515668, -8.378539419186657, 0.0 ] } }
+]
+}
