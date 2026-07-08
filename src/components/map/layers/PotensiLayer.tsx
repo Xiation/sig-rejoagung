@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import { GeoJSON, Pane } from "react-leaflet";
 import type { FeatureCollection, Feature } from "geojson";
 import type { Layer, PathOptions, LeafletMouseEvent } from "leaflet";
-import LandModalContent from "../content/PotensiModal";
+import InfoModal from "../InfoModal";
 
 // ─── CHOROPLETH COLOR MAP ────────────────────────────────────────────────────
 // Warna unik per Dusun — pastel fill, konsisten untuk legend juga
@@ -97,52 +97,6 @@ function DusunLegend() {
   );
 }
 
-// ─── MODAL WRAPPER ───────────────────────────────────────────────────────────
-
-function LandModal({
-  data,
-  onClose,
-}: {
-  data: Record<string, unknown> | null;
-  onClose: () => void;
-}) {
-  if (!data) return null;
-  return (
-    <div className="fixed inset-0 bg-black/50 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-2xl w-full sm:max-w-lg max-h-[85vh] overflow-y-auto relative animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
-        {/* Sticky Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 pt-4 pb-3 flex items-center justify-between rounded-t-2xl sm:rounded-t-xl z-10">
-          <div className="w-8 h-1 bg-gray-200 rounded-full mx-auto sm:hidden" />
-          <p className="hidden sm:block text-xs text-gray-400 font-medium uppercase tracking-wide">
-            Detail Potensi Dusun
-          </p>
-          <button
-            onClick={onClose}
-            className="ml-auto text-gray-400 hover:text-gray-700 transition-colors text-xl leading-none"
-            aria-label="Tutup"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6">
-          <LandModalContent data={data as Parameters<typeof LandModalContent>[0]["data"]} />
-        </div>
-
-        {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-3">
-          <button
-            onClick={onClose}
-            className="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity text-sm"
-          >
-            Tutup Detail
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 
@@ -226,11 +180,15 @@ export default function PotensiLayer() {
       {/* Legend */}
       <DusunLegend />
 
-      {/* Detail Modal */}
-      <LandModal
-        data={selectedDusun}
-        onClose={() => setSelectedDusun(null)}
-      />
+      {/* Detail Modal — shared InfoModal wrapper */}
+      {selectedDusun && (
+        <InfoModal
+          data={selectedDusun}
+          isOpen={true}
+          onClose={() => setSelectedDusun(null)}
+          activeModule="potensi"
+        />
+      )}
     </>
   );
 }

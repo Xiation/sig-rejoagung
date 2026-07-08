@@ -199,8 +199,13 @@ return (
               onEachFeature={(feature: Feature, layer: Layer) => {           
                 layer.on({                                                   
                   click: () => {                                             
-                    setSelectedAsset(feature.properties);                    
-                    setIsModalOpen(true);                                    
+                    const coords = (feature.geometry as any)?.coordinates;
+                    setSelectedAsset({
+                      ...feature.properties,
+                      _lat: coords ? coords[1] : undefined,
+                      _lng: coords ? coords[0] : undefined,
+                    });
+                    setIsModalOpen(true);
                   },                                                         
                 });                                                          
               }}                                                             
@@ -216,6 +221,7 @@ return (
           data={selectedAsset}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          activeModule="sekolah"
         />
       )}
     </>

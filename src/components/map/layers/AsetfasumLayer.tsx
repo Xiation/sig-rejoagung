@@ -155,7 +155,13 @@ return (
         onEachFeature={(feature: Feature, layer: Layer) => {
           layer.on({
             click: () => {
-              setSelectedAsset(feature.properties);
+              // Inject coordinates from geometry for display in modal
+              const coords = (feature.geometry as any)?.coordinates;
+              setSelectedAsset({
+                ...feature.properties,
+                _lat: coords ? coords[1] : undefined,
+                _lng: coords ? coords[0] : undefined,
+              });
               setIsModalOpen(true);
             },
           });
@@ -169,6 +175,7 @@ return (
           data={selectedAsset}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          activeModule="aset"
         />
       )}
     </>

@@ -9,7 +9,6 @@ import {
 import {
     assetsSummary, categoryData, ownershipData
 } from "@/constants/assetsSummary";
-import CustomTooltip from "./customTooltip";
 
 export default function AssetMetrics(){
     return (
@@ -19,10 +18,9 @@ export default function AssetMetrics(){
         {assetsSummary.map((stat) => (
           <Card
             key={stat.id}
-            className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl overflow-hidden"
+            className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl"
+            // style={{ backgroundColor: stat.bgColor, borderColor: stat.borderColor }}
           >
-            {/* Colored top-border accent */}
-            <div className="h-1 w-full" style={{ backgroundColor: stat.accentColor }} />
             <CardContent className="p-5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <span className="text-2xl">{stat.icon}</span>
@@ -37,13 +35,13 @@ export default function AssetMetrics(){
                 </span>
               </div>
               <div>
-                <p className="display-metric text-slate-900 leading-none">
+                <p className="text-3xl font-bold text-gray-900 leading-none">
                   {stat.value}
-                  <span className="text-base font-medium text-slate-400 ml-1">
+                  <span className="text-base font-medium text-gray-500 ml-1">
                     {stat.unit}
                   </span>
                 </p>
-                <p className="font-body text-sm text-slate-500 mt-1">{stat.label}</p>
+                <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -53,7 +51,7 @@ export default function AssetMetrics(){
       {/* Row 2 — 2 Chart Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Panel Kiri — Donut Chart: Status Kepemilikan */}
-        <Card className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl">
+        <Card>
           <CardHeader>
             <CardTitle className="label-caps text-slate-500">Distribusi Status Kepemilikan</CardTitle>
           </CardHeader>
@@ -79,11 +77,11 @@ export default function AssetMetrics(){
                       <Cell key={index} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip formatter={(value) => [`${value} aset`, "Jumlah"]} />
                   <Legend
                     wrapperStyle={{ flexWrap: "wrap", fontSize: "12px" }}
                     formatter={(value) => (
-                      <span className="font-body text-xs text-slate-500">{value}</span>
+                      <span className="text-xs text-gray-600">{value}</span>
                     )}
                   />
                 </PieChart>
@@ -93,7 +91,7 @@ export default function AssetMetrics(){
         </Card>
 
         {/* Panel Kanan — Bar Chart: Distribusi Kategori */}
-        <Card className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl">
+        <Card>
           <CardHeader>
             <CardTitle className="label-caps text-slate-500">Rekapitulasi per Kategori Aset</CardTitle>
           </CardHeader>
@@ -116,7 +114,7 @@ export default function AssetMetrics(){
                     interval={0}
                   />
                   <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip formatter={(value) => [`${value} aset`, "Jumlah"]} />
                   <Bar dataKey="jumlah" radius={[4, 4, 0, 0]}>
                     {categoryData.map((entry, index) => (
                       <Cell key={index} fill={entry.color} />

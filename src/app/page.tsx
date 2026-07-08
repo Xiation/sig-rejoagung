@@ -1,66 +1,88 @@
 // src/app/page.tsx
+// Phase 2 — Bento Shell Main Viewport
+// Layout: Fixed Sidebar (18rem) + Fixed TopAppBar (4rem) + Liquid main content
+// Sumber: docs/DESIGN/DESIGN_SYS.md Bab 2
+
 "use client";
 
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import MapViewer from "@/components/map/MapViewer";
+import TopAppBar from "@/components/layout/TopAppBar";
+import dynamic from "next/dynamic";
 import AnalyticsDashboard from "@/components/analytics/analyticsDashboard";
 
-const MODULE_LABELS: Record<string, { title: string; badge: string; badgeColor: string }> = {
+// Dynamic import for Leaflet — prevents SSR hydration mismatch
+const MapViewer = dynamic(() => import("@/components/map/MapViewer"), {
+  ssr: false,
+});
+
+// ── Module metadata ──────────────────────────────────────────────────────────
+const MODULE_META: Record<
+  string,
+  { title: string; badge: string; badgeVariant: "primary" | "map" | "default" }
+> = {
   dashboard: {
-    title: "Dashboard Analisis Desa Rejoagung",
+    title: "Analytics Dashboard",
     badge: "Ringkasan",
-    badgeColor: "bg-violet-50 text-violet-700",
+    badgeVariant: "primary",
   },
   aset: {
     title: "Pemetaan Aset & Fasilitas Umum Desa",
     badge: "Peta Interaktif",
-    badgeColor: "bg-emerald-50 text-emerald-700",
+    badgeVariant: "map",
   },
   potensi: {
     title: "Visualisasi Potensi Lahan & Sumber Daya Alam",
     badge: "Peta Interaktif",
-    badgeColor: "bg-emerald-50 text-emerald-700",
+    badgeVariant: "map",
   },
   sekolah: {
     title: "Analisis Spasial Aksesibilitas Sekolah",
     badge: "Peta Interaktif",
-    badgeColor: "bg-emerald-50 text-emerald-700",
+    badgeVariant: "map",
   },
 };
 
 export default function DashboardGIS() {
-  const [activeModule, setActiveModule] = useState("aset");
-  const meta = MODULE_LABELS[activeModule] ?? MODULE_LABELS["aset"];
+  const [activeModule, setActiveModule] = useState<string>("aset");
+  const meta = MODULE_META[activeModule] ?? MODULE_META["aset"];
+  const isMapView = activeModule !== "dashboard";
 
   return (
-    <div className="flex h-screen w-screen bg-slate-50">
+    // Root shell: full-screen, row layout
+    <div className="flex h-screen w-screen overflow-hidden bg-[var(--surface-container-low)]">
+
+      {/* ── Fixed Sidebar (288px) ── */}
       <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
 
-      <main className="flex-1 flex flex-col relative h-full overflow-hidden">
-        {/* ── Header ── */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6 z-10 shrink-0 gap-3">
-          <h1 className="font-heading text-slate-900 font-semibold text-[17px] leading-snug tracking-tight flex-1 truncate">
-            {meta.title}
-          </h1>
-          <span
-            className={`font-body text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${meta.badgeColor}`}
-          >
-            {meta.badge}
-          </span>
-        </header>
+      {/* ── Main Viewport — offset by sidebar ── */}
+      <div className="flex flex-col flex-1 h-full" style={{ marginLeft: "18rem" }}>
 
-        {/* ── Conditional View Area ── */}
-        <div className="flex-1 p-5 bg-slate-50 h-full overflow-hidden">
-          {activeModule === "dashboard" ? (
-            <AnalyticsDashboard />
+        {/* ── Fixed TopAppBar (64px) ── */}
+        <TopAppBar
+          title={meta.title}
+          badge={meta.badge}
+          badgeVariant={meta.badgeVariant}
+        />
+
+        {/* ── Scrollable / Fluid Content Area ── */}
+        {/* mt-16 = offset TopAppBar height; p-6 = DESIGN_SYS global padding */}
+        <main className="flex-1 mt-16 overflow-hidden">
+          {isMapView ? (
+            // Map view: full-bleed, padded container with rounded card
+            <div className="w-full h-full p-6">
+              <div className="w-full h-full rounded-xl overflow-hidden border border-[var(--outline-variant)] shadow-sm bg-white">
+                <MapViewer activeModule={activeModule} />
+              </div>
+            </div>
           ) : (
-            <div className="w-full h-full rounded-xl overflow-hidden border border-slate-100 shadow-sm bg-white">
-              <MapViewer activeModule={activeModule} />
+            // Dashboard view: scrollable, full-width
+            <div className="w-full h-full overflow-y-auto">
+              <AnalyticsDashboard />
             </div>
           )}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
