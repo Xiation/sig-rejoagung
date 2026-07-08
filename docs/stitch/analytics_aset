@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Web GIS Rejoagung - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet"/>
+<script crossorigin="" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#68dba9",
+                      "surface-container-highest": "#e0e3e5",
+                      "error": "#ba1a1a",
+                      "outline-variant": "#bccac0",
+                      "tertiary-container": "#00855b",
+                      "on-tertiary": "#ffffff",
+                      "surface-dim": "#d8dadc",
+                      "secondary-container": "#dae2fd",
+                      "secondary-fixed-dim": "#bec6e0",
+                      "primary-container": "#00855d",
+                      "chart-smp": "#3b82f6",
+                      "on-secondary": "#ffffff",
+                      "background": "#f7f9fb",
+                      "surface-container-high": "#e6e8ea",
+                      "inverse-primary": "#68dba9",
+                      "error-container": "#ffdad6",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#e0e3e5",
+                      "chart-smk": "#fbbf24",
+                      "text-muted": "#64748b",
+                      "chart-sd": "#f43f5e",
+                      "border": "#e2e8f0",
+                      "on-surface-variant": "#3d4a42",
+                      "outline": "#6d7a72",
+                      "tertiary-fixed": "#6ffbbe",
+                      "on-surface": "#191c1e",
+                      "on-secondary-fixed-variant": "#3f465c",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-primary-fixed-variant": "#005137",
+                      "primary": "#006948",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "on-tertiary-container": "#f5fff6",
+                      "surface": "#ffffff",
+                      "on-secondary-container": "#5c647a",
+                      "on-background": "#191c1e",
+                      "inverse-surface": "#2d3133",
+                      "surface-tint": "#006c4a",
+                      "surface-container": "#eceef0",
+                      "surface-container-low": "#f2f4f6",
+                      "on-secondary-fixed": "#131b2e",
+                      "secondary": "#565e74",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#f5fff7",
+                      "on-primary-fixed": "#002114",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed": "#dae2fd",
+                      "on-tertiary-fixed": "#002113",
+                      "primary-fixed": "#85f8c4",
+                      "tertiary": "#006947",
+                      "surface-bright": "#f7f9fb"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-margin-mobile": "1rem",
+                      "stack-component": "1rem",
+                      "container-margin-desktop": "1.5rem",
+                      "gutter-grid": "1.5rem",
+                      "stack-section": "2rem",
+                      "sidebar-width": "18rem"
+              },
+              "fontFamily": {
+                      "body-base": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Geist Sans"
+                      ],
+                      "headline-lg-mobile": [
+                              "Geist Sans"
+                      ],
+                      "section-header": [
+                              "Geist Sans"
+                      ],
+                      "display-metric": [
+                              "Geist Sans"
+                      ],
+                      "micro-copy": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-base": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "section-header": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-metric": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "micro-copy": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-on-surface h-screen overflow-hidden flex font-body-base">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 docked full-height left-0 w-sidebar-width border-r border-outline-variant dark:border-outline bg-white dark:bg-inverse-surface shadow-sm z-50">
+<!-- Brand / Header -->
+<div class="px-6 pb-6 border-b border-outline-variant/30 flex items-center gap-3">
+<span aria-hidden="true" class="material-symbols-outlined text-3xl filled-icon text-primary dark:text-primary-fixed-dim">map</span>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim">Desa Rejoagung</h1>
+<p class="font-label-caps text-label-caps text-secondary mt-1">GIS Platform</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 overflow-y-auto py-4 px-4 space-y-1">
+<a aria-current="page" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-container text-on-primary-container font-semibold border-r-4 border-primary group hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined filled-icon" data-icon="dashboard">dashboard</span>
+<span class="font-body-base text-body-base">Analytics Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container-high transition-colors group dark:hover:bg-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-body-base text-body-base">Interactive Map</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container-high transition-colors group dark:hover:bg-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-base text-body-base">Spatial Settings</span>
+</a>
+</nav>
+<!-- Footer Actions -->
+<div class="p-4 border-t border-outline-variant/30">
+<button class="w-full mb-4 flex items-center justify-center gap-2 bg-primary text-white py-2.5 px-4 rounded-lg font-body-base text-body-base font-semibold hover:bg-tertiary-container transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">download</span>
+                Export Data
+            </button>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="help">help</span>
+                    Help Center
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+                    Log Out
+                </a>
+</nav>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-sidebar-width flex-1 flex flex-col h-full relative">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-sidebar-width z-40 flex justify-between items-center px-container-margin-desktop h-16 bg-white/90 backdrop-blur-md dark:bg-inverse-surface/90 border-b border-outline-variant dark:border-outline shadow-sm docked full-width">
+<div class="flex items-center gap-4">
+<h2 class="font-section-header text-section-header font-extrabold text-primary dark:text-primary-fixed-dim">Analytics Dashboard</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-lg pointer-events-none">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border border-outline-variant/50 bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary text-sm w-64 transition-shadow" placeholder="Search spatial data..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button aria-label="notifications" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-2 rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-all duration-200 p-1 pr-2 rounded-full hover:bg-surface-container-low border border-transparent">
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full object-cover bg-surface-variant" data-alt="A small, circular avatar portrait of a professional administrator, neutral lighting, minimalist background, bright and clear, high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsyZrBva0xlkAmZafM9UWWu87l0h6IS8eIcHgObUw8S2X4CCQUQYo1f583-ef__GawfWJkjCISehY3h7tPjTSelo61tMBM21da7YIIOTv1B09qQ3P6l0UEyXlZ9er-arlUePcRYoTX_EKnfvOsmpSXzTOomJ8sempn8nwOIt3EX0cmjpg-kXzyTVZz2bs0QYafeM7ALuSdIPkh6SZs7qjkRfMpiNzK2SiYdatfKHfVaJ49-80WlGXx0A"/>
+</button>
+<button class="bg-primary/10 text-primary hover:bg-primary/20 px-4 py-2 rounded-full text-sm font-semibold transition-colors">
+                        Add Layer
+                    </button>
+</div>
+</div>
+</header>
+<!-- Scrollable Dashboard Content -->
+<div class="flex-1 overflow-y-auto mt-16 p-container-margin-desktop">
+<div class="max-w-7xl mx-auto space-y-stack-section">
+<!-- Welcome/Context Block -->
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-2">Ikhtisar Wilayah</h3>
+<p class="text-secondary text-body-base font-body-base max-w-3xl">Pemantauan data spasial dan metrik utama Desa Rejoagung untuk mendukung pengambilan keputusan strategis.</p>
+</div>
+<!-- Metrics Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-grid">
+<!-- Metric Card 1 -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-between">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-xl">home_work</span>
+<span class="font-label-caps text-label-caps text-slate-500">Total Dusun</span>
+</div>
+<div>
+<span class="font-display-metric text-display-metric text-on-surface">4</span>
+</div>
+</div>
+<!-- Metric Card 2 -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-xl">agriculture</span>
+<span class="font-label-caps text-label-caps text-slate-500">Indeks Pertanaman (IP)</span>
+</div>
+<div>
+<span class="font-display-metric text-display-metric text-on-surface">200</span>
+<span class="text-emerald-600 text-sm ml-2 font-medium bg-emerald-50 px-2 py-0.5 rounded-full">+15% YoY</span>
+</div>
+<!-- Decorative abstract map bg -->
+<div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-9xl">map</span>
+</div>
+</div>
+<!-- Metric Card 3 -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-between">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-xl">terrain</span>
+<span class="font-label-caps text-label-caps text-slate-500">Topografi Dominan</span>
+</div>
+<div>
+<span class="font-section-header text-section-header text-on-surface">Datar - Landai</span>
+</div>
+</div>
+</div>
+<!-- Expanded Metrics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter-grid">
+<!-- Aset & Fasilitas Umum -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col h-full">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-emerald-600 text-xl">account_balance</span>
+<h3 class="font-label-caps text-label-caps text-slate-500">Aset &amp; Fasilitas Umum</h3>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-4 mb-6">
+<div>
+<p class="text-xs text-slate-500 font-medium">Total Gedung Aset</p>
+<p class="font-section-header text-slate-900">12 <span class="text-sm font-normal text-slate-500">unit</span></p>
+</div>
+<div>
+<p class="text-xs text-slate-500 font-medium">Luas Lahan Kas</p>
+<p class="font-section-header text-slate-900">8.4 <span class="text-sm font-normal text-slate-500">Ha</span></p>
+</div>
+<div class="col-span-2">
+<p class="text-xs text-slate-500 font-medium">Kondisi Bangunan</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
+<div class="bg-emerald-500 h-full w-[85%]"></div>
+</div>
+<span class="text-sm font-semibold text-slate-700">85% Layak</span>
+</div>
+</div>
+</div>
+<div class="h-40" id="assetChartRoot"></div>
+</div>
+<!-- Akses & Sarana Pendidikan -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col h-full">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-emerald-600 text-xl">school</span>
+<h3 class="font-label-caps text-label-caps text-slate-500">Akses &amp; Sarana Pendidikan</h3>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-4 mb-6">
+<div class="col-span-2">
+<p class="text-xs text-slate-500 font-medium">Total Sekolah</p>
+<div class="flex items-end gap-2">
+<p class="font-section-header text-slate-900">8</p>
+<p class="text-sm text-slate-500 mb-1">(SD: 4, SMP: 2, SMA: 2)</p>
+</div>
+</div>
+<div>
+<p class="text-xs text-slate-500 font-medium">Radius Layanan</p>
+<p class="font-section-header text-slate-900">1.2 <span class="text-sm font-normal text-slate-500">km</span></p>
+</div>
+<div>
+<p class="text-xs text-slate-500 font-medium">Status Zonasi</p>
+<p class="font-section-header text-emerald-600">100%</p>
+</div>
+</div>
+<div class="h-40" id="eduChartRoot"></div>
+</div>
+<!-- Kesehatan & Kesejahteraan -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col h-full">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-emerald-600 text-xl">local_hospital</span>
+<h3 class="font-label-caps text-label-caps text-slate-500">Kesehatan &amp; Kesejahteraan</h3>
+</div>
+<div class="flex-1 flex flex-col gap-5">
+<div class="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-emerald-100 rounded-lg text-emerald-600">
+<span class="material-symbols-outlined text-sm">health_and_safety</span>
+</div>
+<div>
+<p class="text-xs text-slate-500 font-medium">Fasilitas Kesehatan</p>
+<p class="text-sm font-medium text-slate-900">Pustu, Polindes, Posyandu</p>
+</div>
+</div>
+<span class="font-section-header text-slate-900">3</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+<span class="material-symbols-outlined text-sm">medical_services</span>
+</div>
+<div>
+<p class="text-xs text-slate-500 font-medium">Tenaga Kesehatan</p>
+<p class="text-sm font-medium text-slate-900">Terdaftar Aktif</p>
+</div>
+</div>
+<span class="font-section-header text-slate-900">12</span>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<div>
+<p class="text-xs text-slate-500 font-medium">Indeks Kesejahteraan</p>
+<div class="flex items-center gap-2">
+<p class="font-display-metric text-2xl text-slate-900">0.78</p>
+<span class="text-emerald-600 text-xs font-medium bg-emerald-50 px-2 py-0.5 rounded-full flex items-center"><span class="material-symbols-outlined text-xs mr-1">trending_up</span> Meningkat</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Middle Section: Chart & Threats -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-grid">
+<!-- Chart Panel (Spans 8 cols) -->
+<div class="lg:col-span-8 bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">bar_chart</span>
+<h3 class="font-label-caps text-label-caps text-slate-500">Distribusi Potensi Sumber Daya</h3>
+</div>
+<button class="text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">more_horiz</span></button>
+</div>
+<!-- Chart Placeholder (CSS Visual representation) -->
+<div class="flex-1 flex items-end gap-4 h-64 pt-4 border-b border-slate-100 pb-2 relative">
+<!-- Y-Axis labels approx -->
+<div class="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-micro-copy text-slate-400 pb-8 h-full">
+<span>100</span>
+<span>75</span>
+<span>50</span>
+<span>25</span>
+<span>0</span>
+</div>
+<div class="flex-1 flex items-end justify-around pl-8 h-full">
+<!-- Bar 1 -->
+<div class="w-16 flex flex-col items-center group cursor-pointer">
+<div class="w-full bg-emerald-100 rounded-t-sm h-[80%] transition-all duration-300 group-hover:bg-emerald-200 relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 rounded">80%</div>
+</div>
+<span class="mt-3 text-xs font-medium text-slate-600">Padi</span>
+</div>
+<!-- Bar 2 -->
+<div class="w-16 flex flex-col items-center group cursor-pointer">
+<div class="w-full bg-blue-100 rounded-t-sm h-[40%] transition-all duration-300 group-hover:bg-blue-200 relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 rounded">40%</div>
+</div>
+<span class="mt-3 text-xs font-medium text-slate-600">Nila</span>
+</div>
+<!-- Bar 3 -->
+<div class="w-16 flex flex-col items-center group cursor-pointer">
+<div class="w-full bg-amber-100 rounded-t-sm h-[60%] transition-all duration-300 group-hover:bg-amber-200 relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 rounded">60%</div>
+</div>
+<span class="mt-3 text-xs font-medium text-slate-600">Sapi</span>
+</div>
+<!-- Bar 4 -->
+<div class="w-16 flex flex-col items-center group cursor-pointer">
+<div class="w-full bg-slate-200 rounded-t-sm h-[25%] transition-all duration-300 group-hover:bg-slate-300 relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 rounded">25%</div>
+</div>
+<span class="mt-3 text-xs font-medium text-slate-600">PLTS Atap</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Threat Matrix (Spans 4 cols) -->
+<div class="lg:col-span-4 bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-error text-xl">warning</span>
+<h3 class="font-label-caps text-label-caps text-slate-500">Matriks Ancaman &amp; Kerentanan</h3>
+</div>
+<div class="flex-1 flex flex-col gap-3">
+<div class="flex items-center justify-between p-3 rounded-lg border border-error-container bg-error-container/20">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+<span class="font-body-base text-sm font-medium text-on-surface">Kekeringan (Musim Kemarau)</span>
+</div>
+<span class="text-error bg-error-container px-2 py-0.5 rounded text-xs font-bold">Tinggi</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg border border-orange-200 bg-orange-50">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-orange-500"></div>
+<span class="font-body-base text-sm font-medium text-on-surface">Alih Fungsi Lahan Pertanian</span>
+</div>
+<span class="text-orange-700 bg-orange-100 px-2 py-0.5 rounded text-xs font-bold">Sedang</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg border border-orange-200 bg-orange-50">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-orange-500"></div>
+<span class="font-body-base text-sm font-medium text-on-surface">Pencemaran Sungai (Limbah)</span>
+</div>
+<span class="text-orange-700 bg-orange-100 px-2 py-0.5 rounded text-xs font-bold">Sedang</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Policy Summary -->
+<div class="bg-emerald-50 rounded-xl p-6 border border-emerald-100 flex items-start gap-4 shadow-sm">
+<div class="p-3 bg-white rounded-lg shadow-sm shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl">gavel</span>
+</div>
+<div>
+<h4 class="font-section-header text-lg font-semibold text-primary-fixed-variant mb-2">Rekomendasi Kebijakan Spasial</h4>
+<p class="font-body-base text-body-base text-slate-700 leading-relaxed max-w-4xl">
+                            Berdasarkan analisis tata ruang saat ini, disarankan untuk menetapkan zona perlindungan lahan pertanian abadi (LP2B) secara ketat di dusun timur untuk mencegah alih fungsi lahan. Selain itu, pengembangan infrastruktur irigasi mikro perlu diprioritaskan untuk mitigasi kekeringan tahunan.
+                        </p>
+<div class="mt-4 flex gap-3">
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-tertiary shadow-sm transition-colors">Lihat Draf Kebijakan</button>
+<button class="bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors">Analisis Lanjutan</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script data-type="module" type="text/babel">
+    const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip: RechartsTooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } = Recharts;
+
+    const AssetChart = () => {
+        const data = [
+            { name: 'Perkantoran', value: 40, color: '#059669' },
+            { name: 'Sarana Sosial', value: 35, color: '#3b82f6' },
+            { name: 'Ekonomi', value: 25, color: '#f59e0b' }
+        ];
+
+        return (
+            <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                    <Pie
+                        data={data}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={60}
+                        paddingAngle={5}
+                        dataKey="value"
+                    >
+                        {data.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                    </Pie>
+                    <RechartsTooltip 
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        itemStyle={{ color: '#0f172a', fontSize: '12px', fontWeight: 500 }}
+                    />
+                </PieChart>
+            </ResponsiveContainer>
+        );
+    };
+
+    const EduChart = () => {
+        const data = [
+            { name: 'SD', students: 420 },
+            { name: 'SMP', students: 280 },
+            { name: 'SMA', students: 210 }
+        ];
+
+        return (
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                    <RechartsTooltip 
+                        cursor={{ fill: '#f1f5f9' }}
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Bar dataKey="students" fill="#059669" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                </BarChart>
+            </ResponsiveContainer>
+        );
+    };
+
+    const rootAsset = ReactDOM.createRoot(document.getElementById('assetChartRoot'));
+    rootAsset.render(<AssetChart />);
+
+    const rootEdu = ReactDOM.createRoot(document.getElementById('eduChartRoot'));
+    rootEdu.render(<EduChart />);
+</script>
+</body></html>

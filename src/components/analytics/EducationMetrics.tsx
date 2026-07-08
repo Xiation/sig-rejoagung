@@ -9,6 +9,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer,
   PieChart, Pie, Legend,
 } from "recharts";
+import { Badge } from "../ui/badge";
+import CustomTooltip from "./customTooltip";
 
 // ─── DATA (hardcoded) ────────────────────────────────────────────────────────
 
@@ -68,15 +70,15 @@ export default function EducationMetrics() {
   return (
     <div className="space-y-6">
       {/* Card 1 — Makro: Total Sekolah */}
-      <Card className="border-l-4 border-l-blue-500">
+      <Card className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl border-l-4 border-l-blue-500">
         <CardContent className="p-6 flex items-center gap-6">
           <span className="text-5xl">🏫</span>
           <div>
-            <p className="text-5xl font-bold text-gray-900">11</p>
-            <p className="text-lg text-gray-600 mt-1">
+            <p className="display-metric text-slate-900">11</p>
+            <p className="font-body text-base text-slate-600 mt-1">
               Lembaga Pendidikan Terdata di Desa Rejoagung
             </p>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="font-body text-sm text-slate-400 mt-1">
               Termasuk SD, SMP, SMK, TK, dan Pondok Pesantren · Tahun 2026
             </p>
           </div>
@@ -86,9 +88,9 @@ export default function EducationMetrics() {
       {/* Row — 2 Chart Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Card 2 — Bar Chart: Distribusi Jenjang */}
-        <Card>
+        <Card className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-base">Distribusi per Jenjang Pendidikan</CardTitle>
+            <CardTitle className="label-caps text-slate-500">Distribusi per Jenjang Pendidikan</CardTitle>
           </CardHeader>
           <CardContent>
             {tierData.length === 0 ? (
@@ -100,7 +102,7 @@ export default function EducationMetrics() {
                 <BarChart data={tierData} margin={{ top: 5, right: 10, bottom: 10, left: 0 }}>
                   <XAxis dataKey="jenjang" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
-                  <Tooltip formatter={(value) => [`${value} lembaga`, "Jumlah"]} />
+                  <Tooltip content={<CustomTooltip />} />
                   <Bar dataKey="jumlah" radius={[4, 4, 0, 0]}>
                     {tierData.map((entry, index) => (
                       <Cell key={index} fill={entry.color} />
@@ -113,13 +115,13 @@ export default function EducationMetrics() {
         </Card>
 
         {/* Card 3 — Pie Chart: Distribusi Akreditasi */}
-        <Card>
+        <Card className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="label-caps text-slate-500 flex items-center gap-2">
               Distribusi Akreditasi
-              <span className="text-xs font-normal text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                * data estimasi
-              </span>
+              <Badge className="bg-amber-50 text-amber-700 border border-amber-200 font-body text-[10px] font-semibold">
+                 * Data estimasi
+              </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -143,7 +145,7 @@ export default function EducationMetrics() {
                       <Cell key={index} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value} lembaga`, "Jumlah"]} />
+                  <Tooltip content={<CustomTooltip />} />
                   <Legend
                     wrapperStyle={{ flexWrap: "wrap", fontSize: "12px" }}
                   />
@@ -155,9 +157,9 @@ export default function EducationMetrics() {
       </div>
 
       {/* Card 4 — Travel Time Matrix Table */}
-      <Card>
+      <Card className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-base">Matriks Waktu Tempuh ke Sekolah</CardTitle>
+          <CardTitle className="label-caps text-slate-500">Matriks Waktu Tempuh ke Sekolah</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -206,33 +208,30 @@ export default function EducationMetrics() {
       </Card>
 
       {/* Card 5 — Accessibility Coverage Index */}
-      <Card className="border-l-4 border-l-emerald-500">
+      <Card className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl border-l-4 border-l-emerald-500">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="label-caps text-slate-500 flex items-center gap-2">
             Indeks Cakupan Aksesibilitas
-            <span className="text-xs font-normal text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+            <Badge className="bg-amber-50 text-amber-700 border border-amber-200 font-body text-[10px] font-semibold">
               * estimasi
-            </span>
+            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-end gap-3">
-            <p className="text-5xl font-bold text-emerald-600">{coverageIndex}%</p>
-            <p className="text-sm text-gray-500 pb-2 leading-snug">
+            <p className="display-metric text-emerald-600">{coverageIndex}%</p>
+            <p className="font-body text-sm text-slate-500 pb-2 leading-snug">
               Estimasi pemukiman dalam<br />
               <strong>zona aman (&lt; 10 menit)</strong> ke sekolah terdekat
             </p>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-3">
+          <div className="w-full bg-slate-100 rounded-full h-3">
             <div
-              className="h-3 rounded-full transition-all duration-700"
-              style={{
-                width: `${coverageIndex}%`,
-                background: "linear-gradient(to right, #10b981, #22c55e)",
-              }}
+              className="h-3 rounded-full bg-emerald-600 transition-all duration-700"
+              style={{ width: `${coverageIndex}%` }}
             />
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="font-body text-xs text-slate-400">
             Dihitung berdasarkan hasil Network Analysis Service Area (10 
             Menit) dengan luas total Desa Rejoagung 4,25 juta m² (Tim Geodesi KKN-PPM  
             UGM 2026).

@@ -74,6 +74,64 @@ function getBufferStyle(source: string): L.PathOptions {
 //       return { fillColor: "#6b7280", fillOpacity: 0.2 };
 //     }
 
+function SekolahLegend() {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "16px",
+          right: "16px",
+          zIndex: 1000,
+          background: "rgba(255,255,255,0.95)",
+          backdropFilter: "blur(8px)",
+          borderRadius: "12px",
+          padding: "12px 16px",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+          pointerEvents: "none",
+          minWidth: "180px",
+        }}
+      >
+        <p
+          style={{
+            fontSize: "11px",
+            fontWeight: 700,
+            color: "#374151",
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+            marginBottom: "8px",
+          }}
+        >
+          Sekolah
+        </p>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
+            <span style={{ width: "12px", height: "12px", backgroundColor: "#ec4899", display: "inline-block", marginRight: "8px" }}></span>
+            TK
+          </li>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
+            <span style={{ width: "12px", height: "12px", backgroundColor: "#ef4444", display: "inline-block", marginRight: "8px" }}></span>
+            SD
+          </li>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
+            <span style={{ width: "12px", height: "12px", backgroundColor: "#3b82f6", display: "inline-block", marginRight: "8px" }}></span>
+            SMP
+          </li>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
+            <span style={{ width: "12px", height: "12px", backgroundColor: "#10b981", display: "inline-block", marginRight: "8px" }}></span>
+            SMA
+          </li>
+          <li style={{ display: "flex", alignItems: "center" }}>
+            <span style={{ width: "12px", height: "12px", backgroundColor: "#eab308", display: "inline-block", marginRight: "8px" }}></span>
+            SMK
+          </li>
+        </ul>
+        <p style={{ fontSize: "10px", color: "#9ca3af", marginTop: "8px" }}>
+        Klik poligon untuk detail SDA
+      </p>
+      </div>
+    );
+  }
+
 
 export default function sekolahLayer(){
     const [sekolahData, setSekolahData] = useState<any>(null);
@@ -149,6 +207,9 @@ return (
             />                                                               
           )}                                                                 
         </Pane>
+
+        {/* legend */}
+        <SekolahLegend />
 
       {isModalOpen && selectedAsset && (
         <InfoModal

@@ -50,38 +50,78 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  /* ── Hijau Rejoagung Design Tokens ── */
+  --background: #f7f9fb;           /* surface-bright */
+  --foreground: #191c1e;           /* on-surface */
+
+  --card: #ffffff;
+  --card-foreground: #191c1e;
+
+  --popover: #ffffff;
+  --popover-foreground: #191c1e;
+
+  /* PRIMARY → Hijau Rejoagung */
+  --primary: #006948;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f2f4f6;            /* surface-container-low */
+  --secondary-foreground: #191c1e;
+
+  --muted: #eceef0;                /* surface-container */
+  --muted-foreground: #64748b;     /* text-muted (slate-500) */
+
+  --accent: #f0fdf4;               /* emerald-50 tint */
+  --accent-foreground: #006948;
+
+  --destructive: #ba1a1a;          /* error token */
+  --border: #e2e8f0;               /* design spec border */
+  --input: #e2e8f0;
+  --ring: #006948;                 /* focus ring = primary */
+
+  /* Chart colors — aligned to design spec data visualization */
+  --chart-1: #10b981;              /* emerald-500 (primary data) */
+  --chart-2: #3b82f6;              /* blue-500 (SMP / secondary) */
+  --chart-3: #f43f5e;              /* rose-500 (SD / alerts) */
+  --chart-4: #fbbf24;              /* amber-400 (SMK / warning) */
+  --chart-5: #8b5cf6;              /* violet-500 (Pesantren) */
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Sidebar tokens */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #191c1e;
+  --sidebar-primary: #006948;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0fdf4;
+  --sidebar-accent-foreground: #006948;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #006948;
+}
+
+/* ── Typography Utility Classes ── */
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+  .font-body {
+    font-family: var(--font-inter), system-ui, sans-serif;
+  }
+  .label-caps {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .display-metric {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    display: block;
+  }
 }
 
 .dark {

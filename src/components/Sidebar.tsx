@@ -1,74 +1,122 @@
 "use client";
 
-import { Button, Card } from "@/components/components";
+import { LayoutDashboard, MapPin, Leaf, School } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-// Definisikan tipe data props biar TypeScript ga ngamuk
 interface SidebarProps {
   activeModule: string;
   setActiveModule: (module: string) => void;
 }
 
+const NAV_ITEMS = [
+  {
+    id: "dashboard",
+    label: "Dashboard Analisis",
+    icon: LayoutDashboard,
+    group: "overview",
+  },
+  {
+    id: "aset",
+    label: "Aset & Fasum Desa",
+    icon: MapPin,
+    group: "map",
+  },
+  {
+    id: "potensi",
+    label: "Potensi Lahan & SDA",
+    icon: Leaf,
+    group: "map",
+  },
+  {
+    id: "sekolah",
+    label: "Aksesibilitas Sekolah",
+    icon: School,
+    group: "map",
+  },
+];
+
 export default function Sidebar({ activeModule, setActiveModule }: SidebarProps) {
   return (
-    <aside className="w-72 border-r bg-muted/20 p-6 flex flex-col h-full shrink-0">
-      {/* Header Sidebar */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary">Web GIS Desa</h1>
-        <p className="text-sm text-muted-foreground">Desa Rejoagung</p>
+    <aside className="w-72 bg-white border-r border-slate-200 flex flex-col h-full shrink-0">
+      {/* ── Brand Header ── */}
+      <div className="px-6 py-5 border-b border-slate-100">
+        <div className="flex items-center gap-2.5 mb-0.5">
+          {/* Brand mark */}
+          <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center shrink-0">
+            <span className="text-white text-sm font-bold">R</span>
+          </div>
+          <div>
+            <h1 className="font-heading text-slate-900 font-bold text-base leading-tight">
+              Web GIS Desa
+            </h1>
+            <p className="font-body text-emerald-600 text-xs font-semibold">
+              Rejoagung 2026
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Menu Navigasi (Toggle Layer) */}
-      <div className="flex flex-col gap-3 flex-1">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-          Modul Peta
-        </h2>
+      {/* ── Navigation ── */}
+      <nav className="flex flex-col flex-1 px-3 py-4 gap-1 overflow-y-auto">
+        {/* Overview Section */}
+        <p className="label-caps text-slate-400 px-3 mb-1">Overview</p>
+        {NAV_ITEMS.filter((i) => i.group === "overview").map((item) => {
+          const Icon = item.icon;
+          const isActive = activeModule === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveModule(item.id)}
+              className={cn(
+                "flex items-center gap-3 w-full text-left px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                isActive
+                  ? "bg-emerald-50 text-emerald-700 border-l-2 border-emerald-600 rounded-r-lg pl-[10px]"
+                  : "text-slate-600 hover:bg-slate-50 rounded-lg hover:text-slate-900"
+              )}
+            >
+              <Icon
+                size={16}
+                className={isActive ? "text-emerald-600" : "text-slate-400"}
+              />
+              {item.label}
+            </button>
+          );
+        })}
 
-        {/* Tombol 1: Dashboard */}
-        <Button 
-          variant={activeModule === "dashboard" ? "default" : "ghost"} 
-          className="justify-start gap-2"
-          onClick={() => setActiveModule("dashboard")}
-        >
-          📊 Dashboard Analisis
-        </Button>
+        {/* Map Modules Section */}
+        <p className="label-caps text-slate-400 px-3 mt-4 mb-1">Modul Peta</p>
+        {NAV_ITEMS.filter((i) => i.group === "map").map((item) => {
+          const Icon = item.icon;
+          const isActive = activeModule === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveModule(item.id)}
+              className={cn(
+                "flex items-center gap-3 w-full text-left px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                isActive
+                  ? "bg-emerald-50 text-emerald-700 border-l-2 border-emerald-600 rounded-r-lg pl-[10px]"
+                  : "text-slate-600 hover:bg-slate-50 rounded-lg hover:text-slate-900"
+              )}
+            >
+              <Icon
+                size={16}
+                className={isActive ? "text-emerald-600" : "text-slate-400"}
+              />
+              {item.label}
+            </button>
+          );
+        })}
+      </nav>
 
-        {/*
-          Tombol-tombol berikutnya untuk modul-modul lain.
-          Gunakan pola yang sama seperti tombol dashboard di atas.
-        */}
-        
-        {/* Tombol 2: Aset & Fasum */}
-        <Button 
-          variant={activeModule === "aset" ? "default" : "ghost"} 
-          className="justify-start gap-2"
-          onClick={() => setActiveModule("aset")}
-        >
-          📍 Aset & Fasum Desa
-        </Button>
-
-        {/* Tombol 3: Potensi Lahan */}
-        <Button 
-          variant={activeModule === "potensi" ? "default" : "ghost"} 
-          className="justify-start gap-2"
-          onClick={() => setActiveModule("potensi")}
-        >
-          🌴 Potensi Lahan & Sumber Daya Alam
-        </Button>
-
-        {/* Tombol 4: Akses Sekolah */}
-        <Button 
-          variant={activeModule === "sekolah" ? "default" : "ghost"} 
-          className="justify-start gap-2"
-          onClick={() => setActiveModule("sekolah")}
-        >
-          🏫 Aksesibilitas Sekolah
-        </Button>
-      </div>
-
-      {/* Footer Sidebar */}
-      <div className="mt-auto pt-6 border-t">
-        <p className="text-xs text-center text-muted-foreground">
-          KKN-PPM UGM 2026<br/>Klaster Saintek
+      {/* ── Footer ── */}
+      <div className="px-6 py-4 border-t border-slate-100">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <p className="font-body text-xs text-slate-500 font-medium">Data Aktif 2026</p>
+        </div>
+        <p className="font-body text-[10px] text-slate-400 leading-relaxed">
+          Tim Geodesi & IT<br />KKN-PPM UGM 2026 · Klaster Saintek
         </p>
       </div>
     </aside>
