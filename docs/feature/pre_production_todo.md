@@ -8,12 +8,18 @@ Dokumen ini berisi daftar tugas penyempurnaan ( *polish* ) dan penambahan fitur 
   - Tanaman Pangan
   - Buah-buahan
   - Sayur-sayuran
-- [ ] **Visualisasi Grafik Batang:** Buat komponen visualisasi (*Bar Chart*) untuk menampilkan data produksi tersebut (bisa diletakkan di komponen Analytics atau di dalam `PotensiModal` tapi kayaknya ga mungkin di potensi modal).
+- [ ] **Visualisasi Grafik Batang:** Integrasikan komponen visualisasi (*Bar Chart*) untuk menampilkan data produksi tersebut ke dalam modul *Analytics Dashboard*, tepatnya diletakkan di dalam file `src/components/analytics/LandPotentialMetrics.tsx`.
 
 ## 2. Sentralisasi Data (Single Source of Truth)
 - [ ] **Migrasi Data Hardcoded:** Ekstrak semua data yang saat ini masih *hardcoded* di dalam komponen UI (seperti data pengayaan `SekolahModal`, konstanta di `EducationMetrics`, dll) ke dalam bentuk file *Single Source of Truth* terpisah.
-- [ ] **Format Penyimpanan:** Tentukan format penyimpanan (misalnya file `.json` di folder `public/data/` atau `.ts` terpusat di `src/constants/`).
-- [ ] **Kemudahan Update:** Pastikan struktur data dibuat sedemikian rupa sehingga jika ada data lapangan KKN yang baru lengkap, pembaruan hanya perlu dilakukan di satu file sumber tersebut tanpa menyentuh kode komponen React.
+- [ ] **Migrasi Macro KPIs:** Pindahkan `MACRO_KPIS` dari `src/components/analytics/analyticsDashboard.tsx` ke folder SSOT (`src/constants/`).
+- [ ] **Migrasi Data Sekolah (Master Data):** Pindahkan dan satukan `SEKOLAH_DATA` (dari `SekolahModal`) dan data dari `EducationMetrics` ke dalam satu struktur Master Data terpusat (`src/constants/`).
+- [ ] **Konsolidasi Logika Kategori Aset:** Satukan fungsi `deriveCategory` di `AsetfasumModal.tsx` dengan `categoryData` di `assetsSummary.ts` agar menggunakan satu konfigurasi kategori global (berisi nama, ikon, dan warna tema).
+- [ ] **Konsolidasi Warna Sekolah:** Satukan konfigurasi warna jenjang sekolah (`JENJANG_COLORS` di `SekolahModal` dan warna grafik di `tierData` pada `EducationMetrics`) menjadi satu konfigurasi global.
+- [ ] **Migrasi Data Land Potential Metrics:** Pindahkan konstanta `resourceFrequency`, `threats`, dan `executiveSummary` dari `src/components/analytics/LandPotentialMetrics.tsx` ke folder SSOT.
+- [ ] **Format Penyimpanan (TS Objects):** Simpan data statis dalam bentuk file `.ts` murni (TypeScript Objects) di folder `src/constants/` agar tetap memiliki *type-safety* dan dimuat tanpa harus *parsing* JSON manual.
+- [ ] **Pembuatan Service Layer (Jembatan API):** Buat folder khusus (misal: `src/services/api.ts`) yang berisi fungsi-fungsi *asynchronous* (`async function`) yang bertugas mengembalikan (*return*) data dari `src/constants/` (simulasi proses *fetch* data).
+- [ ] **Future-Proofing Komponen:** Ubah komponen UI agar memanggil fungsi dari *Service Layer* secara *asynchronous* (misal pakai `useEffect` atau server components). Ini mempersiapkan transisi mulus di mana gaya penulisan *fetch* data sudah terbentuk, sehingga siap jika nanti website migrasi menjadi *full-stack* dengan *backend* sungguhan.
 
 ## 3. Perbaikan UI/UX: Konflik InfoModal & TopAppBar
 - [ ] **Investigasi Isu Overlap:** Atasi masalah di mana `PotensiModal` (karena kontennya sangat padat) memanjang ke atas hingga menabrak `TopAppBar`.
@@ -33,3 +39,7 @@ Dokumen ini berisi daftar tugas penyempurnaan ( *polish* ) dan penambahan fitur 
 - [ ] **Sekolah Modal (`SekolahModal.tsx`):** Tambahkan juga elemen *placeholder* gambar serupa untuk merepresentasikan kondisi fisik bangunan sekolah.
 - [ ] **Desain & Layout:** Pastikan *placeholder* ini memiliki aspek rasio yang pas (contoh: 16:9), desain yang menyatu dengan *style* M3, dan *fallback* visual jika foto tidak tersedia (misal: *skeleton loader* atau ilustrasi *default*).
 **CATATAN** Gambar hanya diletakkan pada aset yang emang terdapat fotonya saja
+
+## 6. Revisi Data Geospasial (GeoJSON)
+- [ ] **Update Data Spasial:** Lakukan penyesuaian dan penggantian pada file-file `.geojson` akibat adanya perubahan terbaru pada data geospasial lapangan.
+- [ ] **Lokasi Pembaruan:** Pastikan file di dalam direktori `public/data/akses/`, `public/data/fasum/`, dan `public/data/potensi/` seluruhnya terbarui ke versi mutakhir.
