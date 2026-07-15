@@ -43,15 +43,15 @@ function getSekolahMarkerStyle(namobj: string): L.CircleMarkerOptions {
 }
 
 function getBufferStyle(source: string): L.PathOptions {
-      if (source.includes("15")) {                                           
+      if (source.includes("60")) {                                           
         return { fillColor: "#ef4444", color: "#ef4444", weight: 1,          
   fillOpacity: 0.20 }; // Red                                                
       }
-      if (source.includes("10")) {
+      if (source.includes("30")) {
         return { fillColor: "#eab308", color: "#eab308", weight: 1,          
   fillOpacity: 0.25 }; // Yellow
       }
-      if (source.includes("5")) {
+      if (source.includes("10")) {
         return { fillColor: "#22c55e", color: "#22c55e", weight: 1,          
   fillOpacity: 0.30 }; // Green
       }
@@ -140,11 +140,11 @@ export default function sekolahLayer(){
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // const sekolahFile = "/data/akses4326/sekolah.geojson";
-    const sekolahFile = "/data/akses4326/pendidikan.geojson";
+    const sekolahFile = "/data/akses/Fasilitas_Pendidikan.geojson";
     const bufferFiles = [
-        "/data/akses4326/service_area_5_menit.geojson",
-        "/data/akses4326/service_area_10_menit.geojson",
-        "/data/akses4326/service_area_15_menit.geojson"
+        "/data/akses/Service_Area_10_Menit.geojson",
+        "/data/akses/Service_Area_30_Menit.geojson",
+        "/data/akses/Service_Area_60_Menit.geojson"
     ];
     useEffect(() => {
         const fetchSekolahData = async () => {

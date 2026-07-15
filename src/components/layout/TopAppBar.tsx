@@ -11,6 +11,7 @@ interface TopAppBarProps {
   title: string;
   badge?: string;
   badgeVariant?: "primary" | "map" | "default";
+  onMenuClick?: () => void;
 }
 
 const BADGE_STYLES: Record<string, string> = {
@@ -24,14 +25,20 @@ const ICON_MAP: Record<string, string> = {
   "Peta Interaktif": "map",
 };
 
-export default function TopAppBar({ title, badge, badgeVariant = "default" }: TopAppBarProps) {
+export default function TopAppBar({ title, badge, badgeVariant = "default", onMenuClick }: TopAppBarProps) {
   const iconName = badge ? (ICON_MAP[badge] ?? "info") : "info";
 
   return (
-    <header
-      className="fixed top-0 right-0 z-40 h-16 bg-white/90 backdrop-blur-md border-b border-[var(--outline-variant)] shadow-sm flex items-center px-6 gap-4"
-      style={{ left: "18rem" }}
-    >
+    <header className="fixed top-0 right-0 left-0 lg:left-72 z-40 h-16 bg-white/90 backdrop-blur-md border-b border-[var(--outline-variant)] shadow-sm flex items-center px-4 lg:px-6 gap-3 lg:gap-4">
+      {/* Hamburger — mobile/tablet only */}
+      <button
+        onClick={onMenuClick}
+        className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center text-[var(--secondary)] hover:bg-[var(--surface-container)] transition-colors shrink-0"
+        aria-label="Buka menu navigasi"
+      >
+        <Icon name="menu" size={22} />
+      </button>
+
       {/* Context icon */}
       <div className="w-8 h-8 rounded-lg bg-[var(--surface-container-low)] border border-[var(--outline-variant)] flex items-center justify-center shrink-0">
         <Icon name={iconName} size={18} className="text-[var(--primary)]" />

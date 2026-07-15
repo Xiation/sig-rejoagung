@@ -8,7 +8,7 @@ import L from "leaflet";
 import InfoModal from "../InfoModal";
 
 function getMarkerStyle(source: string): L.CircleMarkerOptions {
-  if (source.includes("pemerintah")) {
+  if (source.includes("Pemerintahan")) {
     return {
       radius: 10,
       fillColor: FASUM_COLORS.pemerintah,
@@ -17,7 +17,7 @@ function getMarkerStyle(source: string): L.CircleMarkerOptions {
       opacity: 1,
       fillOpacity: 0.9,
     };
-  } if (source.includes("tempat")) {
+  } if (source.includes("Ibadah")) {
     return {
       radius: 8,
       fillColor: FASUM_COLORS["tempat ibadah"],
@@ -27,7 +27,7 @@ function getMarkerStyle(source: string): L.CircleMarkerOptions {
       fillOpacity: 0.9,
     };
   }
-  if (source.includes("pendidikan")) {
+  if (source.includes("Pendidikan")) {
     return {
       radius: 8,
       fillColor: FASUM_COLORS.pendidikan,
@@ -106,9 +106,9 @@ export default function AsetLayer() {
     const [geoData, setGeoData] = useState<any>(null);
 
     const targetFiles = [
-    "/data/Fasum4326/pemerintah.geojson",
-    "/data/Fasum4326/tempat%20ibadah.geojson",
-    "/data/Fasum4326/fasilitas%20pendidikan.geojson",
+    "/data/fasum/Pemerintahan.geojson",
+    "/data/fasum/Ibadah.geojson",
+    "/data/fasum/Pendidikan.geojson",
     ]
 
     useEffect(() => {

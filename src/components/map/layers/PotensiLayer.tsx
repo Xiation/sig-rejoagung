@@ -108,7 +108,7 @@ export default function PotensiLayer() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("/data/potensi_SDA_data/dusun.geojson");
+        const res = await fetch("/data/potensi/Potensi_Dusun.geojson");
         if (res.ok) {
           const json: FeatureCollection = await res.json();
           setGeoData(json);

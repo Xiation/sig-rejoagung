@@ -45,12 +45,13 @@ export default function InfoModal({ isOpen, onClose, data, activeModule }: InfoM
   return (
     // ── Backdrop Overlay ────────────────────────────────────────────────────
     <div
-      className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+      className="fixed top-16 inset-x-0 bottom-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
       {/* ── Modal Shell (max-w-2xl per DESIGN_SYS.md) ─────────────────────── */}
+      {/* max-h dihitung persis dari sisa ruang backdrop (100vh - 4rem TopAppBar - 2rem padding atas/bawah) — modal gak akan pernah nabrak TopAppBar */}
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col relative overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-[var(--outline-variant)]"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[calc(100vh-6rem)] flex flex-col relative overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-[var(--outline-variant)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ── Modal Header ──────────────────────────────────────────────────── */}

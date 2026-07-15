@@ -45,6 +45,7 @@ const MODULE_META: Record<
 
 export default function DashboardGIS() {
   const [activeModule, setActiveModule] = useState<string>("aset");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const meta = MODULE_META[activeModule] ?? MODULE_META["aset"];
   const isMapView = activeModule !== "dashboard";
 
@@ -52,26 +53,32 @@ export default function DashboardGIS() {
     // Root shell: full-screen, row layout
     <div className="flex h-screen w-screen overflow-hidden bg-[var(--surface-container-low)]">
 
-      {/* ── Fixed Sidebar (288px) ── */}
-      <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
+      {/* ── Sidebar — fixed 288px di desktop (lg:), slide-in drawer di mobile/tablet ── */}
+      <Sidebar
+        activeModule={activeModule}
+        setActiveModule={setActiveModule}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
-      {/* ── Main Viewport — offset by sidebar ── */}
-      <div className="flex flex-col flex-1 h-full" style={{ marginLeft: "18rem" }}>
+      {/* ── Main Viewport — offset by sidebar cuma di desktop (lg:) ── */}
+      <div className="flex flex-col flex-1 h-full ml-0 lg:ml-72">
 
         {/* ── Fixed TopAppBar (64px) ── */}
         <TopAppBar
           title={meta.title}
           badge={meta.badge}
           badgeVariant={meta.badgeVariant}
+          onMenuClick={() => setSidebarOpen(true)}
         />
 
         {/* ── Scrollable / Fluid Content Area ── */}
-        {/* mt-16 = offset TopAppBar height; p-6 = DESIGN_SYS global padding */}
+        {/* mt-16 = offset TopAppBar height; p-6 = DESIGN_SYS global padding (desktop only, map full-bleed di mobile) */}
         <main className="flex-1 mt-16 overflow-hidden">
           {isMapView ? (
-            // Map view: full-bleed, padded container with rounded card
-            <div className="w-full h-full p-6">
-              <div className="w-full h-full rounded-xl overflow-hidden border border-[var(--outline-variant)] shadow-sm bg-white">
+            // Map view: full-bleed di mobile/tablet, padded+rounded card di desktop (lg:)
+            <div className="w-full h-full lg:p-6">
+              <div className="w-full h-full lg:rounded-xl overflow-hidden lg:border border-[var(--outline-variant)] lg:shadow-sm bg-white">
                 <MapViewer activeModule={activeModule} />
               </div>
             </div>

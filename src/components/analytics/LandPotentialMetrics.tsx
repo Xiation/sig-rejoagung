@@ -11,37 +11,19 @@ import {
 } from "recharts";
 import Icon from "@/components/ui/Icon";
 import CustomTooltip from "./customTooltip";
+import { useState } from "react"
+import { produksiPertanian, KATEGORI_LIST, KATEGORI_COLORS } from "@/constants/produksiPertanian";
+import { resourceFrequency, threats, executiveSummary } from "@/constants/landPotential";
 
-// ─── DATA ─────────────────────────────────────────────────────────────────────
-const resourceFrequency = [
-  { nama: "PLTS Atap", jumlah: 4, color: "#f59e0b" },
-  { nama: "Padi", jumlah: 4, color: "#10b981" },
-  { nama: "Sapi", jumlah: 2, color: "#ef4444" },
-  { nama: "Nila", jumlah: 3, color: "#3b82f6" },
-  { nama: "Biogas", jumlah: 3, color: "#8b5cf6" },
-  { nama: "Kakao", jumlah: 2, color: "#92400e" },
-  { nama: "Udang Galah", jumlah: 2, color: "#0891b2" },
-  { nama: "Agrowisata", jumlah: 4, color: "#16a34a" },
-];
-
-const threats = [
-  "Alih Fungsi Lahan",
-  "Degradasi Mata Air",
-  "Kekeringan Musim Kemarau",
-  "Fluktuasi Harga Cabai",
-  "Pencemaran Sungai",
-  "Perubahan Iklim",
-  "Konversi Lahan",
-  "Banjir / Genangan",
-  "Pencemaran Riparian",
-  "Alih Fungsi Lahan Basah",
-];
-
-const executiveSummary =
-  "Fokus strategis 2026: Optimalisasi Potensi Desa Rejoagung difokuskan pada intensifikasi pertanian lahan basah dan hortikultura, didukung oleh transisi menuju energi terbarukan komunal (PLTS & Biogas), serta hilirisasi produk kerajinan lokal dan ekowisata berkelanjutan.";
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function LandPotentialMetrics() {
+const [activeKategori, setActiveKategori] = useState<string>(KATEGORI_LIST[3]);
+const produksiKategori = produksiPertanian
+                        .filter((item) => item.kategori === activeKategori)
+                        .sort((a, b) => b.jumlah - a.jumlah);
+const totalTonaseKategori = produksiKategori.reduce((sum, item) => sum + item.jumlah, 0);
+
   return (
     <div className="bg-white rounded-xl border border-[var(--outline-variant)] shadow-sm flex flex-col">
 
@@ -125,6 +107,72 @@ export default function LandPotentialMetrics() {
               </Badge>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* ── Produksi Pertanian & Perkebunan ──────────────────────────────── */}
+      <div className="border-t border-[var(--outline-variant)]/60 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Icon name="grass" size={16} className="text-[var(--primary)]" />
+          <p className="label-caps text-[var(--text-muted)]">
+            Produksi Pertanian & Perkebunan (Ton/Tahun)
+          </p>
+          <span className="ml-auto label-caps px-2.5 py-1 rounded-full bg-[var(--surface-container)] text-[var(--on-surface)] border border-[var(--outline-variant)]">
+            Total {totalTonaseKategori.toLocaleString("id-ID")} ton
+          </span>
+        </div>
+        <p className="micro-copy text-[var(--text-muted)] mb-3">
+          Rekapitulasi hasil produksi per komoditas — pilih kategori untuk melihat rincian
+        </p>
+
+        {/* Tab switcher */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {KATEGORI_LIST.map((kategori) => (
+            <button
+              key={kategori}
+              type="button"
+              onClick={() => setActiveKategori(kategori)}
+              className={`label-caps px-3 py-1.5 rounded-full border transition-colors ${
+                activeKategori === kategori
+                  ? "bg-emerald-50 border-emerald-600 text-emerald-600"
+                  : "bg-white border-slate-200 text-slate-700"
+              }`}
+            >
+              {kategori}
+            </button>
+          ))}
+        </div>
+
+        {/* Scrollable horizontal bar chart — semua item tampil, tidak di-top-N-kan */}
+        <div className="max-h-72 overflow-y-auto">
+          <ResponsiveContainer width="100%" height={Math.max(produksiKategori.length * 32, 120)}>
+            <BarChart
+              data={produksiKategori}
+              layout="vertical"
+              margin={{ top: 4, right: 24, bottom: 4, left: 8 }}
+            >
+              <XAxis
+                type="number"
+                tick={{ fontSize: 11, fill: "#64748b" }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                type="category"
+                dataKey="komoditas"
+                tick={{ fontSize: 11, fill: "#64748b" }}
+                axisLine={false}
+                tickLine={false}
+                width={110}
+              />
+              <Tooltip content={<CustomTooltip unit="ton" />} />
+              <Bar dataKey="jumlah" radius={[0, 4, 4, 0]} maxBarSize={18}>
+                {produksiKategori.map((entry) => (
+                  <Cell key={entry.komoditas} fill={KATEGORI_COLORS[activeKategori]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 

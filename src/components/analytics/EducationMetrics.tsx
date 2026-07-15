@@ -10,39 +10,43 @@ import {
 import { Badge } from "../ui/badge";
 import Icon from "@/components/ui/Icon";
 import CustomTooltip from "./customTooltip";
+import { SEKOLAH_DATA, JENJANG_COLORS, COVERAGE_INDEX_ESTIMASI } from "@/constants/sekolahData";
 
-// ─── DATA ─────────────────────────────────────────────────────────────────────
-const tierData = [
-  { jenjang: "TK", jumlah: 1, color: "#ec4899" },
-  { jenjang: "SD", jumlah: 3, color: "#ef4444" },
-  { jenjang: "SMP", jumlah: 2, color: "#3b82f6" },
-  { jenjang: "SMK", jumlah: 1, color: "#eab308" },
-  { jenjang: "Pesantren", jumlah: 4, color: "#8b5cf6" },
+// ─── DERIVED DATA (dari SEKOLAH_DATA master, src/constants/sekolahData.ts) ────
+const SEKOLAH_LIST = Object.values(SEKOLAH_DATA);
+const totalLembaga = SEKOLAH_LIST.length;
+const coverageIndex = COVERAGE_INDEX_ESTIMASI;
+
+// Bucket varian jenjang (SD/MI → SD, SMP/MTs → SMP) ke 5 kategori chart
+function bucketJenjang(jenjang: string): string {
+  if (jenjang.includes("SD")) return "SD";
+  if (jenjang.includes("SMP")) return "SMP";
+  return jenjang; // TK, SMK, Pesantren sudah kanonik
+}
+
+const JENJANG_ORDER = ["TK", "SD", "SMP", "SMK", "Pesantren"];
+const tierCounts = SEKOLAH_LIST.reduce<Record<string, number>>((acc, s) => {
+  const tier = bucketJenjang(s.jenjang);
+  acc[tier] = (acc[tier] ?? 0) + 1;
+  return acc;
+}, {});
+const tierData = JENJANG_ORDER.map((jenjang) => ({
+  jenjang,
+  jumlah: tierCounts[jenjang] ?? 0,
+  color: JENJANG_COLORS[jenjang] ?? "#6b7280",
+}));
+
+const ZONA_ORDER: Array<{ label: string; color: string }> = [
+  { label: "< 5 Menit", color: "#10b981" },
+  { label: "5–10 Menit", color: "#f59e0b" },
+  { label: "> 10 Menit", color: "#ef4444" },
 ];
-
-// Travel time — sekolah & jarak
-const travelTimeData = [
-  { sekolah: "SMK NU Darussalam", zona: "< 5 Menit", color: "#10b981" },
-  { sekolah: "PP Salaf Darussalam", zona: "< 5 Menit", color: "#10b981" },
-  { sekolah: "SMP Al Amiriyyah", zona: "< 5 Menit", color: "#10b981" },
-  { sekolah: "SDN 1 Rejoagung", zona: "5–10 Menit", color: "#f59e0b" },
-  { sekolah: "SD N 2 Rejoagung", zona: "5–10 Menit", color: "#f59e0b" },
-  { sekolah: "TK Khadijah 203", zona: "5–10 Menit", color: "#f59e0b" },
-  { sekolah: "MTs Unggulan Darussalam", zona: "5–10 Menit", color: "#f59e0b" },
-  { sekolah: "PP Darussalam", zona: "5–10 Menit", color: "#f59e0b" },
-  { sekolah: "PP Al Falah Rejoagung", zona: "> 10 Menit", color: "#ef4444" },
-  { sekolah: "Ponpes Manbaul Alam", zona: "> 10 Menit", color: "#ef4444" },
-  { sekolah: "MI Al Ma'arif Rejoagung", zona: "> 10 Menit", color: "#ef4444" },
-];
-
-// Zona counts for mini stat display
-const zonaStats = [
-  { label: "< 5 Menit", count: 3, color: "#10b981" },
-  { label: "5–10 Menit", count: 5, color: "#f59e0b" },
-  { label: "> 10 Menit", count: 3, color: "#ef4444" },
-];
-
-const coverageIndex = 68.4;
+const zonaCounts = SEKOLAH_LIST.reduce<Record<string, number>>((acc, s) => {
+  acc[s.zonaWaktu] = (acc[s.zonaWaktu] ?? 0) + 1;
+  return acc;
+}, {});
+const zonaStats = ZONA_ORDER.map((z) => ({ label: z.label, count: zonaCounts[z.label] ?? 0, color: z.color }));
+const zonaAman = SEKOLAH_LIST.filter((s) => s.zonaWaktu !== "> 10 Menit").length;
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function EducationMetrics() {
@@ -58,7 +62,7 @@ export default function EducationMetrics() {
           <p className="section-header text-[var(--on-surface)] truncate">Aksesibilitas Pendidikan</p>
         </div>
         <span className="shrink-0 label-caps px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
-          11 lembaga
+          {totalLembaga} lembaga
         </span>
       </div>
 
@@ -67,7 +71,7 @@ export default function EducationMetrics() {
         {/* Total Sekolah */}
         <div className="bg-white px-4 py-3 col-span-1">
           <p className="micro-copy text-[var(--text-muted)]">Total Lembaga</p>
-          <p className="text-2xl font-extrabold tracking-tight text-[var(--on-surface)] font-[var(--font-geist-sans)]">11</p>
+          <p className="text-2xl font-extrabold tracking-tight text-[var(--on-surface)] font-[var(--font-geist-sans)]">{totalLembaga}</p>
         </div>
         {/* Coverage */}
         <div className="bg-white px-4 py-3 col-span-1">
@@ -77,7 +81,7 @@ export default function EducationMetrics() {
         {/* Zona aman */}
         <div className="bg-white px-4 py-3 col-span-1">
           <p className="micro-copy text-[var(--text-muted)]">Zona Aman</p>
-          <p className="text-2xl font-extrabold tracking-tight text-emerald-600 font-[var(--font-geist-sans)]">8</p>
+          <p className="text-2xl font-extrabold tracking-tight text-emerald-600 font-[var(--font-geist-sans)]">{zonaAman}</p>
           <p className="micro-copy text-[var(--text-muted)]">sekolah ≤ 10 mnt</p>
         </div>
       </div>
@@ -125,7 +129,7 @@ export default function EducationMetrics() {
                 <div className="flex-1 bg-[var(--surface-container-low)] rounded-full h-1.5">
                   <div
                     className="h-1.5 rounded-full transition-all duration-700"
-                    style={{ width: `${(z.count / 11) * 100}%`, background: z.color }}
+                    style={{ width: `${(z.count / totalLembaga) * 100}%`, background: z.color }}
                   />
                 </div>
                 <span className="micro-copy text-[var(--text-muted)] shrink-0">{z.count} sekolah</span>

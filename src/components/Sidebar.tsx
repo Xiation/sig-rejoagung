@@ -10,6 +10,8 @@ import Icon from "@/components/ui/Icon";
 interface SidebarProps {
   activeModule: string;
   setActiveModule: (module: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const NAV_ITEMS = [
@@ -39,12 +41,30 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Sidebar({ activeModule, setActiveModule }: SidebarProps) {
+export default function Sidebar({ activeModule, setActiveModule, isOpen, onClose }: SidebarProps) {
+  const handleSelect = (moduleId: string) => {
+    setActiveModule(moduleId);
+    onClose(); // no-op di desktop (drawer selalu translate-x-0 di lg:), auto-close di mobile
+  };
+
   return (
-    <aside
-      className="fixed left-0 top-0 h-full w-72 bg-white border-r border-[var(--outline-variant)] flex flex-col z-50 shadow-sm"
-      style={{ width: "18rem" }}
-    >
+    <>
+      {/* ── Backdrop (mobile drawer only) ── */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={cn(
+          "fixed left-0 top-0 h-full w-72 bg-white border-r border-[var(--outline-variant)] flex flex-col z-50 shadow-sm transition-transform duration-200 lg:translate-x-0",
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+        style={{ width: "18rem" }}
+      >
       {/* ── Brand Header ── */}
       <div className="px-6 py-5 border-b border-[var(--outline-variant)]/40">
         <div className="flex items-center gap-3">
@@ -52,7 +72,7 @@ export default function Sidebar({ activeModule, setActiveModule }: SidebarProps)
           <div className="w-10 h-10 rounded-lg bg-[var(--surface-container-low)] border border-[var(--outline-variant)] flex items-center justify-center shrink-0">
             <Icon name="map" size={20} filled className="text-[var(--primary)]" />
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <h1 className="font-heading text-[var(--on-surface)] font-bold text-base leading-tight">
               Desa Rejoagung
             </h1>
@@ -60,6 +80,14 @@ export default function Sidebar({ activeModule, setActiveModule }: SidebarProps)
               GIS Platform 2026
             </p>
           </div>
+          {/* Close button — mobile drawer only */}
+          <button
+            onClick={onClose}
+            className="lg:hidden w-8 h-8 rounded-lg flex items-center justify-center text-[var(--secondary)] hover:bg-[var(--surface-container)] transition-colors shrink-0"
+            aria-label="Tutup menu"
+          >
+            <Icon name="close" size={20} />
+          </button>
         </div>
       </div>
 
@@ -72,7 +100,7 @@ export default function Sidebar({ activeModule, setActiveModule }: SidebarProps)
           return (
             <button
               key={item.id}
-              onClick={() => setActiveModule(item.id)}
+              onClick={() => handleSelect(item.id)}
               className={cn(
                 "flex items-center gap-3 w-full text-left px-4 py-3 rounded-lg body-base font-semibold transition-colors duration-150",
                 isActive
@@ -98,7 +126,7 @@ export default function Sidebar({ activeModule, setActiveModule }: SidebarProps)
           return (
             <button
               key={item.id}
-              onClick={() => setActiveModule(item.id)}
+              onClick={() => handleSelect(item.id)}
               className={cn(
                 "flex items-center gap-3 w-full text-left px-4 py-3 rounded-lg body-base font-semibold transition-colors duration-150",
                 isActive
@@ -138,6 +166,7 @@ export default function Sidebar({ activeModule, setActiveModule }: SidebarProps)
           </p>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

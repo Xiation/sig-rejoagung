@@ -5,9 +5,21 @@
 
 "use client";
 
+import Image from "next/image";
 import Icon from "@/components/ui/Icon";
+import { categoryData } from "@/constants/assetsSummary";
+import { ASET_FOTO } from "@/constants/asetFoto";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Lookup icon+accentClass from the shared category config (single source with AssetMetrics chart) */
+function getCategoryVisual(nama: string): { icon: string; accentClass: string } {
+  const found = categoryData.find((c) => c.nama === nama);
+  return {
+    icon: found?.icon ?? "location_city",
+    accentClass: found?.accentClass ?? "text-slate-600 bg-slate-50 border-slate-200",
+  };
+}
 
 /** Derive category & function from _source path and properties */
 function deriveCategory(data: Record<string, unknown>): {
@@ -18,23 +30,28 @@ function deriveCategory(data: Record<string, unknown>): {
 } {
   const source = (data._source as string) ?? "";
 
-  if (source.includes("pemerintah")) {
+  if (source.includes("Pemerintahan")) {
     return {
       kategori: "Fasilitas Pemerintahan",
       fungsi: "Pelayanan administrasi dan pemerintahan desa",
-      icon: "gavel",
-      accentClass: "text-orange-600 bg-orange-50 border-orange-200",
+      ...getCategoryVisual("Fasilitas Pemerintahan"),
     };
   }
-  if (source.includes("tempat") || source.includes("ibadah")) {
+  if (source.includes("olahraga")) {
     return {
-      kategori: "Tempat Ibadah",
-      fungsi: "Sarana peribadatan dan kegiatan keagamaan masyarakat",
-      icon: "mosque",
-      accentClass: "text-blue-600 bg-blue-50 border-blue-200",
+      kategori: "Olahraga",
+      fungsi: "Sarana kegiatan olahraga dan kebugaran masyarakat",
+      ...getCategoryVisual("Olahraga"),
     };
   }
-  if (source.includes("pendidikan")) {
+  if (source.includes("Tempat") || source.includes("Ibadah")) {
+    return {
+      kategori: "Fasilitas Keagamaan",
+      fungsi: "Sarana peribadatan dan kegiatan keagamaan masyarakat",
+      ...getCategoryVisual("Fasilitas Keagamaan"),
+    };
+  }
+  if (source.includes("Pendidikan")) {
     const jenjang = (data.JLPDDK as string) ?? "";
     const fungsiDetail = jenjang
       ? `Pendidikan formal jenjang ${jenjang}`
@@ -42,15 +59,13 @@ function deriveCategory(data: Record<string, unknown>): {
     return {
       kategori: "Fasilitas Pendidikan",
       fungsi: fungsiDetail,
-      icon: "school",
-      accentClass: "text-emerald-600 bg-emerald-50 border-emerald-200",
+      ...getCategoryVisual("Fasilitas Pendidikan"),
     };
   }
   return {
     kategori: "Fasilitas Umum / Sosial",
     fungsi: "Sarana layanan publik desa",
-    icon: "location_city",
-    accentClass: "text-slate-600 bg-slate-50 border-slate-200",
+    ...getCategoryVisual("Fasilitas Umum / Sosial"),
   };
 }
 
@@ -85,6 +100,7 @@ export default function AsetfasumModal({ data }: { data: Record<string, unknown>
   const namaFasilitas = (data.NAMOBJ as string) ?? "Fasilitas Tidak Teridentifikasi";
   const keterangan = (data.REMARK as string) ?? null;
   const statusKepemilikan = (data.FGSGOV as string) ?? (data.FGSIBD as string) ?? (data.FGGPDK as string) ?? null;
+  const fotoUrl = ASET_FOTO[namaFasilitas];
 
   return (
     <div className="p-6 space-y-5">
@@ -104,6 +120,19 @@ export default function AsetfasumModal({ data }: { data: Record<string, unknown>
 
       {/* ── Divider ─────────────────────────────────────────────────────────── */}
       <div className="border-t border-[var(--outline-variant)]/60" />
+
+      {/* ── Foto Kondisi (kondisional — hanya render kalau ASET_FOTO punya entry) ── */}
+      {fotoUrl && (
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-[var(--outline-variant)]">
+          <Image
+            src={fotoUrl}
+            alt={namaFasilitas}
+            fill
+            sizes="(max-width: 640px) 100vw, 640px"
+            className="object-cover"
+          />
+        </div>
+      )}
 
       {/* ── Body: Grid 2 Kolom ──────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -9,45 +9,7 @@ import Icon from "@/components/ui/Icon";
 import AssetMetrics from "./AssetMetrics";
 import EducationMetrics from "./EducationMetrics";
 import LandPotentialMetrics from "./LandPotentialMetrics";
-
-// ── Macro KPI Data (Village-level context cards) ──────────────────────────────
-const MACRO_KPIS = [
-  {
-    id: "dusun",
-    label: "Dusun Terpetakan",
-    value: "4",
-    unit: "dusun",
-    icon: "home_work",
-    watermark: "map",
-    iconBg: "bg-[var(--surface-container)]",
-    iconColor: "text-[var(--primary)]",
-    valueColor: "text-[var(--on-surface)]",
-  },
-  {
-    id: "ip",
-    label: "Indeks Pertanaman",
-    value: "IP 200",
-    unit: "",
-    trend: "Musim Tanam Aktif",
-    trendColor: "text-amber-700 bg-amber-50 border-amber-200",
-    icon: "agriculture",
-    watermark: "grass",
-    iconBg: "bg-amber-50",
-    iconColor: "text-amber-600",
-    valueColor: "text-amber-700",
-  },
-  {
-    id: "topografi",
-    label: "Dominasi Topografi",
-    value: "Datar",
-    unit: "– Landai",
-    icon: "terrain",
-    watermark: "landscape",
-    iconBg: "bg-violet-50",
-    iconColor: "text-violet-600",
-    valueColor: "text-[var(--on-surface)]",
-  },
-];
+import { MACRO_KPIS } from "@/constants/macroKpis";
 
 // ── Macro Scorecard Component ─────────────────────────────────────────────────
 // DESIGN_SYS.md Bab 3.A: Icon top-left, Display Metric center-bottom, Watermark at 8% opacity
@@ -102,7 +64,7 @@ function MacroScorecard({
 export default function AnalyticsDashboard() {
   return (
     <div className="w-full h-full overflow-y-auto bg-[var(--surface-container-low)]">
-      <div className="max-w-7xl mx-auto p-6 pb-16 space-y-8">
+      <div className="max-w-[1600px] mx-auto p-6 pb-16 space-y-8">
 
         {/* ── Welcome / Context Block ─────────────────────────────────────── */}
         <div>

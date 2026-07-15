@@ -160,8 +160,8 @@ Development on these components may only commence during Week 5, provided all co
 
 To accelerate development speed and bypass custom asset rendering overhead, the agent must implement the following tactical logic:
 1. **Zero Custom SVG Icons for MVP:** Do not spend time importing or adjusting external icon sets. Use Leaflet's native `L.circleMarker` utility with high-contrast distinct hex fills:
-   - **Governance/Public Facilities:** Blue (`#3b82f6`)
-   - **Healthcare Facilities:** Red (`#ef4444`)
+   - **Governance/Office Centers:** Orange (`#ea580c`)
+   - **Places of Worship:** Blue (`#2563eb`)
    - **Educational Facilities:** Emerald Green (`#10b981`)
 2. **Standard Functional Property Filters:** Filter arrays natively inside React during rendering cycles by evaluating the `"kategori"` tag value embedded inside the GeoJSON feature properties.
 
