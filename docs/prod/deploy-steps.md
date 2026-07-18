@@ -101,7 +101,7 @@ git push origin gis-rjg-V1.1
 3. Authorize akses ke GitHub, pilih repo `Xiation/sig-rejoagung`.
 4. **Set up builds and deployments:**
    - **Path** (root directory): `/` — project ini bukan monorepo, `package.json` ada di root repo.
-   - **Framework preset:** pilih `Next.js (Static HTML Export)` kalau ada opsinya, atau `None` kalau gak ketemu (isi manual di bawah).
+   - **Framework preset:** **`None`** — JANGAN pilih `Next.js` (tanpa embel-embel lain). Cloudflare versi terbaru nge-wire preset `Next.js` otomatis ke adapter `@opennextjs/cloudflare` (mode SSR penuh di Workers), yang override Build command manual jadi `pnpm opennextjs-cloudflare build` — bentrok total sama `output: "export"` di `next.config.ts` project ini (lihat Troubleshooting di bawah). Pilih `None`, isi field di bawah manual.
    - **Build command:** `pnpm run build`
    - **Build output directory:** `out`
    - **Deploy command** (kalau muncul & wajib diisi — dashboard Cloudflare terbaru nge-require ini): `npx wrangler pages deploy out`. **Jangan** `npx wrangler deploy` polos — itu buat Cloudflare Workers (butuh `wrangler.toml`+entry point yang project ini gak punya), bakal gagal/salah target. `wrangler pages deploy` khusus buat deploy folder statis, konsisten sama Build output directory di atas. Kalau nanti error minta nama project, tambah flag `--project-name=<nama-project-pages-lo>` (biasanya gak perlu — jalan di build environment Cloudflare sendiri, project context udah otomatis ke-detect).
@@ -123,6 +123,29 @@ git push origin gis-rjg-V1.1
 **Catatan:** field-field di atas (Path, API Token, Variable Name/Value) berdasarkan UI Cloudflare yang ditemukan langsung pas eksekusi — kalau labelnya beda dikit di dashboard lo (Cloudflare sering ubah UI), sesuaikan berdasarkan fungsinya, bukan nama persis.
 
 Cloudflare Pages Free plan: unlimited bandwidth & request, gak ada pembatasan komersial/non-komersial — lebih lega buat project institusional kayak ini.
+
+### Troubleshooting: `ENOENT ... .next/standalone/.next/server/pages-manifest.json`
+
+Kalau muncul error kayak gini di build log:
+
+```
+┌──────────────────────────────┐
+│ OpenNext — Generating bundle │
+└──────────────────────────────┘
+...
+Error: ENOENT: no such file or directory, open '.../.next/standalone/.next/server/pages-manifest.json'
+✘ Running custom build `pnpm opennextjs-cloudflare build` failed
+```
+
+**Penyebab:** Framework preset ke-set `Next.js` (bukan `None`), jadi Cloudflare diam-diam jalanin `pnpm opennextjs-cloudflare build` alih-alih `pnpm run build` yang diisi manual di Step 4B poin 4. Adapter `@opennextjs/cloudflare` itu nunggu `.next/standalone/` (hasil build mode SSR) — gak akan pernah ada karena `next.config.ts` project ini pakai `output: "export"` (static export, sengaja skip pembuatan server bundle, lihat Temuan Pre-Deploy di atas dokumen ini).
+
+**Fix:** Project Settings > Builds & deployments > Build configuration, ubah:
+- **Framework preset:** `None`
+- **Build command:** `pnpm run build` (pastikan bukan `pnpm opennextjs-cloudflare build`)
+- **Build output directory:** `out`
+- **Deploy command:** `npx wrangler pages deploy out`
+
+Save, retry deploy. Project ini gak butuh SSR (zero-backend, no API routes, no middleware — lihat Temuan Pre-Deploy) — OpenNext adapter gak relevan sama arsitektur project ini sama sekali, static export sudah tepat.
 
 ---
 
