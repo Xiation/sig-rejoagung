@@ -77,6 +77,39 @@ pnpm install
 
 Verifikasi `pnpm-lock.yaml` muncul di root. File ini sekarang single source of truth dependency tree.
 
+### Troubleshooting: `[ERR_PNPM_IGNORED_BUILDS]`
+
+pnpm 11.x block eksekusi *install/postinstall script* dari dependency manapun secara default (proteksi supply-chain). Kalau muncul:
+
+```
+[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: <nama-paket>, <nama-paket-lain>
+Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.
+```
+
+Ini **fatal di CI non-interactive** (Vercel/Cloudflare build) walau cuma warning non-fatal pas `pnpm install` lokal (install tetap "done", tapi build lanjutan bisa gagal kalau paket itu genuinely dibutuhkan).
+
+**Fix (jalanin lokal, commit hasilnya):**
+
+```bash
+pnpm approve-builds --all
+```
+
+Ini nulis approval ke `pnpm-workspace.yaml` (root project), format:
+
+```yaml
+allowBuilds:
+  <nama-paket>: true
+  <nama-paket-lain>: true
+```
+
+*Catatan:* **Bukan** `package.json` field `"pnpm": { "onlyBuiltDependencies": [...] }` — itu format versi pnpm lama, pnpm 11.x udah gak baca dari situ (bakal muncul warning "field ignored" kalau dicoba).
+
+**Paket ini kemungkinan bakal muncul** (pengalaman migrasi project ini):
+- `sharp`, `unrs-resolver` — transitive dari `next` & `eslint-config-next`, muncul pas `pnpm install` biasa.
+- `esbuild`, `workerd` — transitive dari **Wrangler CLI**, muncul spesifik pas Deploy command `npx wrangler pages deploy out` jalan di Cloudflare Pages (lihat [`deploy-steps.md`](./deploy-steps.md) Step 4B) — bukan dari `pnpm install` project.
+
+**Kalau muncul paket baru di masa depan:** ulangi `pnpm approve-builds --all` lokal (atau edit manual `pnpm-workspace.yaml`, tambah baris `<nama-paket>: true`), commit `pnpm-workspace.yaml`, push, retry build. Jangan panik tiap ketemu nama paket baru — ini pola berulang yang normal, bukan tanda ada yang salah.
+
 ---
 
 ## Step 5 — Update `.gitignore`
