@@ -100,13 +100,27 @@ git push origin gis-rjg-V1.1
 2. Sidebar **Workers & Pages > Create > Pages > Connect to Git**.
 3. Authorize akses ke GitHub, pilih repo `Xiation/sig-rejoagung`.
 4. **Set up builds and deployments:**
+   - **Path** (root directory): `/` — project ini bukan monorepo, `package.json` ada di root repo.
    - **Framework preset:** pilih `Next.js (Static HTML Export)` kalau ada opsinya, atau `None` kalau gak ketemu (isi manual di bawah).
    - **Build command:** `pnpm run build`
    - **Build output directory:** `out`
-5. **Environment Variables (Advanced):** kalau Cloudflare gagal auto-detect pnpm, tambah:
+   - **Deploy command** (kalau muncul & wajib diisi — dashboard Cloudflare terbaru nge-require ini): `npx wrangler pages deploy out`. **Jangan** `npx wrangler deploy` polos — itu buat Cloudflare Workers (butuh `wrangler.toml`+entry point yang project ini gak punya), bakal gagal/salah target. `wrangler pages deploy` khusus buat deploy folder statis, konsisten sama Build output directory di atas. Kalau nanti error minta nama project, tambah flag `--project-name=<nama-project-pages-lo>` (biasanya gak perlu — jalan di build environment Cloudflare sendiri, project context udah otomatis ke-detect).
+5. **API Token (wajib — build system Cloudflare terbaru jalanin `wrangler` di container terisolasi, butuh kredensial eksplisit, gak otomatis kebaca dari sesi dashboard):**
+   - Buka tab baru → klik ikon profil (kanan atas) → **My Profile > API Tokens > Create Token**.
+   - Pilih template **"Edit Cloudflare Workers"** (udah include izin Pages), atau custom permission **Account > Cloudflare Pages > Edit**.
+   - **API Token Name:** bebas, label doang (misal `sig-rejoagung-pages-deploy`), gak ada aturan teks tertentu.
+   - Generate — value token muncul **cuma sekali**, copy sekarang juga (gak bisa dibuka ulang nanti).
+   - Balik ke form setup Pages, isi di bagian **Variable Name / Variable Value**:
+     - Variable Name: `CLOUDFLARE_API_TOKEN`
+     - Variable Value: paste token yang barusan digenerate
+     - Aktifin toggle "Secret"/encrypt kalau ada, biar gak keliatan plain di build log.
+6. **Environment Variables (Advanced):** kalau Cloudflare gagal auto-detect pnpm, tambah variable lagi (Name/Value sama seperti di atas):
    - `PNPM_VERSION` = versi pnpm lokal lo (cek `pnpm -v`).
-6. Klik **Save and Deploy**. Tunggu build selesai.
-7. Dapet URL gratis format `sig-rejoagung.pages.dev` (custom domain bisa diikat gratis juga di **Custom domains**).
+7. **Builds for non-production branches:** centang/aktifkan ini. Branch aktif project ini `gis-rjg-V1.1`, bukan `main` (default Production branch Cloudflare). Kalau toggle ini OFF, push ke `gis-rjg-V1.1` gak bakal ke-build sama sekali. Karena Step ini emang buat **uji coba/trial** (belum mau `main` kesentuh), aktifin toggle ini biar `gis-rjg-V1.1` dapet **Preview URL** sendiri buat di-smoke-test — `main` tetep bersih sampe yakin semua oke dan siap merge.
+8. Klik **Save and Deploy**. Tunggu build selesai.
+9. Dapet URL gratis format `sig-rejoagung.pages.dev` (branch non-production dapet Preview URL format `<hash>.sig-rejoagung.pages.dev`; custom domain bisa diikat gratis juga di **Custom domains**).
+
+**Catatan:** field-field di atas (Path, API Token, Variable Name/Value) berdasarkan UI Cloudflare yang ditemukan langsung pas eksekusi — kalau labelnya beda dikit di dashboard lo (Cloudflare sering ubah UI), sesuaikan berdasarkan fungsinya, bukan nama persis.
 
 Cloudflare Pages Free plan: unlimited bandwidth & request, gak ada pembatasan komersial/non-komersial — lebih lega buat project institusional kayak ini.
 
