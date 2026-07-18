@@ -1,76 +1,172 @@
 "use client";
 
-import { Button, Card } from "@/components/components";
+// src/components/Sidebar.tsx
+// Phase 2 — Bento Shell: Fixed 288px sidebar, M3 semantic tokens, Material Symbols icons
+// Sumber: docs/DESIGN/DESIGN_SYS.md Bab 2
 
-// Definisikan tipe data props biar TypeScript ga ngamuk
+import { cn } from "@/lib/utils";
+import Icon from "@/components/ui/Icon";
+
 interface SidebarProps {
   activeModule: string;
   setActiveModule: (module: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function Sidebar({ activeModule, setActiveModule }: SidebarProps) {
+const NAV_ITEMS = [
+  {
+    id: "dashboard",
+    label: "Analytics Dashboard",
+    icon: "dashboard",
+    group: "overview",
+  },
+  {
+    id: "aset",
+    label: "Aset & Fasum Desa",
+    icon: "account_balance",
+    group: "map",
+  },
+  {
+    id: "potensi",
+    label: "Potensi Lahan & SDA",
+    icon: "agriculture",
+    group: "map",
+  },
+  {
+    id: "sekolah",
+    label: "Aksesibilitas Sekolah",
+    icon: "school",
+    group: "map",
+  },
+];
+
+export default function Sidebar({ activeModule, setActiveModule, isOpen, onClose }: SidebarProps) {
+  const handleSelect = (moduleId: string) => {
+    setActiveModule(moduleId);
+    onClose(); // no-op di desktop (drawer selalu translate-x-0 di lg:), auto-close di mobile
+  };
+
   return (
-    <aside className="w-72 border-r bg-muted/20 p-6 flex flex-col h-full shrink-0">
-      {/* Header Sidebar */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary">Web GIS Desa</h1>
-        <p className="text-sm text-muted-foreground">Desa Rejoagung</p>
+    <>
+      {/* ── Backdrop (mobile drawer only) ── */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={cn(
+          "fixed left-0 top-0 h-full w-72 bg-white border-r border-[var(--outline-variant)] flex flex-col z-50 shadow-sm transition-transform duration-200 lg:translate-x-0",
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+        style={{ width: "18rem" }}
+      >
+      {/* ── Brand Header ── */}
+      <div className="px-6 py-5 border-b border-[var(--outline-variant)]/40">
+        <div className="flex items-center gap-3">
+          {/* Logo mark: icon dalam kotak abu-abu — sesuai mockup */}
+          <div className="w-10 h-10 rounded-lg bg-[var(--surface-container-low)] border border-[var(--outline-variant)] flex items-center justify-center shrink-0">
+            <Icon name="map" size={20} filled className="text-[var(--primary)]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="font-heading text-[var(--on-surface)] font-bold text-base leading-tight">
+              Desa Rejoagung
+            </h1>
+            <p className="micro-copy text-[var(--secondary)] mt-0.5">
+              GIS Platform 2026
+            </p>
+          </div>
+          {/* Close button — mobile drawer only */}
+          <button
+            onClick={onClose}
+            className="lg:hidden w-8 h-8 rounded-lg flex items-center justify-center text-[var(--secondary)] hover:bg-[var(--surface-container)] transition-colors shrink-0"
+            aria-label="Tutup menu"
+          >
+            <Icon name="close" size={20} />
+          </button>
+        </div>
       </div>
 
-      {/* Menu Navigasi (Toggle Layer) */}
-      <div className="flex flex-col gap-3 flex-1">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-          Modul Peta
-        </h2>
+      {/* ── Navigation ── */}
+      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        {/* Section: Overview */}
+        <p className="label-caps text-[var(--text-muted)] px-3 mb-2">Overview</p>
+        {NAV_ITEMS.filter((i) => i.group === "overview").map((item) => {
+          const isActive = activeModule === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => handleSelect(item.id)}
+              className={cn(
+                "flex items-center gap-3 w-full text-left px-4 py-3 rounded-lg body-base font-semibold transition-colors duration-150",
+                isActive
+                  ? "bg-[var(--primary-container)] text-[var(--on-primary-container)] border-r-4 border-[var(--primary)]"
+                  : "text-[var(--secondary)] hover:bg-[var(--surface-container-high)]"
+              )}
+            >
+              <Icon
+                name={item.icon}
+                size={20}
+                filled={isActive}
+                className={isActive ? "text-[var(--on-primary-container)]" : "text-[var(--secondary)]"}
+              />
+              {item.label}
+            </button>
+          );
+        })}
 
-        {/* Tombol 1: Dashboard */}
-        <Button 
-          variant={activeModule === "dashboard" ? "default" : "ghost"} 
-          className="justify-start gap-2"
-          onClick={() => setActiveModule("dashboard")}
-        >
-          📊 Dashboard Analisis
-        </Button>
+        {/* Section: Modul Peta */}
+        <p className="label-caps text-[var(--text-muted)] px-3 mt-5 mb-2">Modul Peta</p>
+        {NAV_ITEMS.filter((i) => i.group === "map").map((item) => {
+          const isActive = activeModule === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => handleSelect(item.id)}
+              className={cn(
+                "flex items-center gap-3 w-full text-left px-4 py-3 rounded-lg body-base font-semibold transition-colors duration-150",
+                isActive
+                  ? "bg-[var(--primary-container)] text-[var(--on-primary-container)] border-r-4 border-[var(--primary)]"
+                  : "text-[var(--secondary)] hover:bg-[var(--surface-container-high)]"
+              )}
+            >
+              <Icon
+                name={item.icon}
+                size={20}
+                filled={isActive}
+                className={isActive ? "text-[var(--on-primary-container)]" : "text-[var(--secondary)]"}
+              />
+              {item.label}
+            </button>
+          );
+        })}
+      </nav>
 
-        {/*
-          Tombol-tombol berikutnya untuk modul-modul lain.
-          Gunakan pola yang sama seperti tombol dashboard di atas.
-        */}
-        
-        {/* Tombol 2: Aset & Fasum */}
-        <Button 
-          variant={activeModule === "aset" ? "default" : "ghost"} 
-          className="justify-start gap-2"
-          onClick={() => setActiveModule("aset")}
+      {/* ── Footer — Export Data + Status ── */}
+      <div className="p-4 border-t border-[var(--outline-variant)]/40 space-y-3">
+        {/* Export Data Button (statis — sesuai scope MVP) */}
+        <button
+          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-[var(--outline-variant)] text-[var(--secondary)] rounded-lg body-base font-semibold hover:bg-[var(--surface-container-low)] transition-colors shadow-sm"
+          onClick={() => {}}
+          aria-label="Export Data GeoJSON"
         >
-          📍 Aset & Fasum Desa
-        </Button>
+          <Icon name="download" size={18} className="text-[var(--secondary)]" />
+          Export Data
+        </button>
 
-        {/* Tombol 3: Potensi Lahan */}
-        <Button 
-          variant={activeModule === "potensi" ? "default" : "ghost"} 
-          className="justify-start gap-2"
-          onClick={() => setActiveModule("potensi")}
-        >
-          🌴 Potensi Lahan & Sumber Daya Alam
-        </Button>
-
-        {/* Tombol 4: Akses Sekolah */}
-        <Button 
-          variant={activeModule === "sekolah" ? "default" : "ghost"} 
-          className="justify-start gap-2"
-          onClick={() => setActiveModule("sekolah")}
-        >
-          🏫 Aksesibilitas Sekolah
-        </Button>
+        {/* Status indicator */}
+        <div className="flex items-center gap-2 px-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <p className="micro-copy text-[var(--text-muted)]">
+            Data Aktif · Tim Geodesi KKN-PPM UGM 2026
+          </p>
+        </div>
       </div>
-
-      {/* Footer Sidebar */}
-      <div className="mt-auto pt-6 border-t">
-        <p className="text-xs text-center text-muted-foreground">
-          KKN-PPM UGM 2026<br/>Klaster Saintek
-        </p>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

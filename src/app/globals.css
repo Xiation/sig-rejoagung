@@ -5,6 +5,38 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ═══════════════════════════════════════════════════════
+   MATERIAL SYMBOLS OUTLINED — Icon Variation Settings
+   ═══════════════════════════════════════════════════════ */
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+  font-size: 24px;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Modifier: Filled state (active nav, selected) */
+.material-symbols-outlined.filled {
+  font-variation-settings:
+    "FILL" 1,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
+/* Modifier: Heavier weight for emphasis */
+.material-symbols-outlined.bold {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 600,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -49,41 +81,177 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ═══════════════════════════════════════════════════════
+   DESIGN SYSTEM: M3 Semantic Tokens (Light Mode — Default)
+   Sumber: docs/DESIGN/DESIGN_SYS.md
+   ═══════════════════════════════════════════════════════ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  /* ── Surface Scale (Canvas → Cards → Elevated Panels) ── */
+  --background:                 #f7f9fb;  /* surface-bright: Canvas utama */
+  --foreground:                 #191c1e;  /* on-surface */
+
+  /* Surface Container Hierarchy */
+  --surface:                    #ffffff;
+  --surface-dim:                #d8dadc;
+  --surface-bright:             #f7f9fb;
+  --surface-container-lowest:   #ffffff;
+  --surface-container-low:      #f2f4f6;  /* Dashboard canvas */
+  --surface-container:          #eceef0;  /* Card primary */
+  --surface-container-high:     #e6e8ea;  /* Elevated panels */
+  --surface-container-highest:  #e0e3e5;
+
+  /* On-Surface Hierarchy */
+  --on-surface:                 #191c1e;
+  --on-surface-variant:         #3d4a42;
+  --inverse-surface:            #2d3133;
+  --inverse-on-surface:         #eff1f3;
+
+  /* ── Border & Outline ── */
+  --outline:                    #6d7a72;
+  --outline-variant:            #bccac0;  /* Soft dividers, card borders */
+  --border:                     #e2e8f0;  /* shadcn/ui default border */
+  --input:                      #e2e8f0;
+
+  /* ── Primary: Hijau Rejoagung (#059669) ── */
+  --primary:                    #059669;  /* Active states, buttons, brand */
+  --on-primary:                 #ffffff;
+  --primary-container:          #d1fae5;  /* Active nav background */
+  --on-primary-container:       #064e3b;  /* Text on primary-container */
+  --inverse-primary:            #6ee7b7;
+  --primary-fixed:              #a7f3d0;
+  --primary-fixed-dim:          #6ee7b7;
+  --on-primary-fixed:           #002114;
+  --on-primary-fixed-variant:   #005137;
+
+  /* ── Secondary ── */
+  --secondary:                  #565e74;
+  --on-secondary:               #ffffff;
+  --secondary-container:        #dae2fd;
+  --on-secondary-container:     #5c647a;
+  --secondary-foreground:       #191c1e;
+
+  /* ── Tertiary (deeper emerald for accents) ── */
+  --tertiary:                   #006947;
+  --on-tertiary:                #ffffff;
+  --tertiary-container:         #00855b;
+  --on-tertiary-container:      #f5fff6;
+
+  /* ── Error / Alert ── */
+  --destructive:                #ba1a1a;
+  --error-container:            #ffdad6;
+  --on-error-container:         #93000a;
+
+  /* ── Status Containers ── */
+  --success-container:          #d1fae5;  /* Positive insight blocks */
+  --on-success-container:       #064e3b;
+  --warning-container:          #fef3c7;  /* Estimasi / pending */
+  --on-warning-container:       #92400e;
+
+  /* ── Semantic Shorthands (shadcn/ui) ── */
+  --card:                       #ffffff;
+  --card-foreground:            #191c1e;
+  --popover:                    #ffffff;
+  --popover-foreground:         #191c1e;
+  --muted:                      #eceef0;
+  --muted-foreground:           #64748b;
+  --accent:                     #f0fdf4;
+  --accent-foreground:          #059669;
+  --ring:                       #059669;
+
+  /* ── Data Visualization ── */
+  --chart-1:                    #10b981;  /* emerald-500 — primary data */
+  --chart-2:                    #3b82f6;  /* blue-500 — SMP / secondary */
+  --chart-3:                    #f43f5e;  /* rose-500 — SD / alerts */
+  --chart-4:                    #fbbf24;  /* amber-400 — SMK / warning */
+  --chart-5:                    #8b5cf6;  /* violet-500 — Pesantren */
+
+  /* ── Sidebar ── */
+  --sidebar:                    #ffffff;
+  --sidebar-foreground:         #191c1e;
+  --sidebar-primary:            #059669;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent:             #f0fdf4;
+  --sidebar-accent-foreground:  #059669;
+  --sidebar-border:             #e2e8f0;
+  --sidebar-ring:               #059669;
+
+  /* ── Text Muted ── */
+  --text-muted:                 #64748b;
+
+  /* ── Radius ── */
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* ═══════════════════════════════════════════════════════
+   TYPOGRAPHY: Utility Classes (DESIGN_SYS.md Bab 1)
+   Matches: display-metric, headline-lg, label-caps, body-base, micro-copy
+   ═══════════════════════════════════════════════════════ */
+@layer utilities {
+  /* Font Family Shortcuts */
+  .font-heading {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+  .font-body {
+    font-family: var(--font-inter), system-ui, sans-serif;
+  }
+
+  /* Display Metric — Large KPI numbers (DESIGN_SYS: text-3xl font-extrabold tracking-tight) */
+  .display-metric {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 1.875rem;     /* text-3xl */
+    font-weight: 800;         /* font-extrabold */
+    line-height: 1.2;
+    letter-spacing: -0.025em; /* tracking-tight */
+    display: block;
+  }
+
+  /* Headline Large — Section headers (text-xl font-bold) */
+  .headline-lg {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 1.25rem;   /* text-xl */
+    font-weight: 700;
+    line-height: 1.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* Section Header — Sub-section titles (text-lg font-semibold) */
+  .section-header {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 1.125rem;  /* text-lg */
+    font-weight: 600;
+    line-height: 1.75rem;
+  }
+
+  /* Label Caps — Metadata & sub-labels (text-[10px] font-bold uppercase tracking-wider) */
+  .label-caps {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.625rem;      /* 10px */
+    font-weight: 700;
+    line-height: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Body Base — Standard reading text (text-sm font-medium) */
+  .body-base {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.875rem;  /* text-sm = 14px */
+    font-weight: 500;
+    line-height: 1.25rem;
+  }
+
+  /* Micro Copy — Captions, IDs, timestamps (text-xs font-normal) */
+  .micro-copy {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.75rem;   /* text-xs = 12px */
+    font-weight: 400;
+    line-height: 1rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   DARK MODE (Kept but non-default per SCOPE.md)
+   ═══════════════════════════════════════════════════════ */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -118,6 +286,9 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* ═══════════════════════════════════════════════════════
+   BASE LAYER
+   ═══════════════════════════════════════════════════════ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -127,5 +298,18 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   LEAFLET TOUCH TARGETS — Mobile/Tablet (< 1024px, TRD breakpoint)
+   Default Leaflet zoom control (26px) di bawah rekomendasi touch-target 44px
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 1023px) {
+  .leaflet-control-zoom a {
+    width: 40px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    font-size: 20px !important;
   }
 }

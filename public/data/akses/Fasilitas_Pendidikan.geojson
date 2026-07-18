@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "Fasilitas Pendidikan",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "NAMOBJ": "SMK NU Darussalam" }, "geometry": { "type": "Point", "coordinates": [ 114.305081097490657, -8.37953977921658, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "Pondok Pesantren Salaf Darussalam" }, "geometry": { "type": "Point", "coordinates": [ 114.305835897563213, -8.379989660054513, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "SMP AL-Amiriyyah" }, "geometry": { "type": "Point", "coordinates": [ 114.306223294951437, -8.379852196465148, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "Pondok Pesantren Darussalam" }, "geometry": { "type": "Point", "coordinates": [ 114.306503845640592, -8.380958153525079, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "SD Negeri 1 Rejoagung" }, "geometry": { "type": "Point", "coordinates": [ 114.302374939283496, -8.384897110195004, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "SD Negeri 2 Rejoagung" }, "geometry": { "type": "Point", "coordinates": [ 114.306856252296924, -8.38379990081804, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "TK Khadijah 203 Rejoagung" }, "geometry": { "type": "Point", "coordinates": [ 114.309431195259634, -8.379066154667745, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "Yayasan Pondok Pesantren Manbaul Ulum" }, "geometry": { "type": "Point", "coordinates": [ 114.303484020515668, -8.378539419186657, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "Pondok Pesantren Al-Falah" }, "geometry": { "type": "Point", "coordinates": [ 114.303035699367669, -8.392557732508674, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "MTs Unggulan Darussalam" }, "geometry": { "type": "Point", "coordinates": [ 114.306346809442005, -8.380976913126059, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "MI Al-Ma'arif" }, "geometry": { "type": "Point", "coordinates": [ 114.303177479968525, -8.390852711023049, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "Pondok Pesantren Tasmirul Aulad" }, "geometry": { "type": "Point", "coordinates": [ 114.300719838208238, -8.389226322623681, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "TK Khodjiah 88" }, "geometry": { "type": "Point", "coordinates": [ 114.303291120196405, -8.391148807200297, 0.0 ] } },
+{ "type": "Feature", "properties": { "NAMOBJ": "SLB Bina Insani Srono" }, "geometry": { "type": "Point", "coordinates": [ 114.294723939978226, -8.383061069647859, 0.0 ] } }
+]
+}

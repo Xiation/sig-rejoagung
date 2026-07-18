@@ -37,7 +37,7 @@ export default function MapBase({ activeModule }: MapBaseProps){
   useEffect(() => {
     const fetchBoundData = async () => {
       try {
-        const res = await fetch("/data/Fasum4326/batas%20administrasi.geojson");
+        const res = await fetch("/data/fasum/Batas Administrasi.geojson");
         if (res.ok) {
           const data = await res.json();
           setBoundaryData(data);

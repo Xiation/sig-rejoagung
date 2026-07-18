@@ -1,244 +1,170 @@
 // src/components/analytics/EducationMetrics.tsx
+// Phase 3 — Composite Card: header + key metrics + embedded bar chart + coverage bar
+// DESIGN_SYS.md Bab 3.B
+
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-    Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from "@/components/ui/table";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer,
-  PieChart, Pie, Legend,
 } from "recharts";
+import { Badge } from "../ui/badge";
+import Icon from "@/components/ui/Icon";
+import CustomTooltip from "./customTooltip";
+import { SEKOLAH_DATA, JENJANG_COLORS, COVERAGE_INDEX_ESTIMASI } from "@/constants/sekolahData";
 
-// ─── DATA (hardcoded) ────────────────────────────────────────────────────────
+// ─── DERIVED DATA (dari SEKOLAH_DATA master, src/constants/sekolahData.ts) ────
+const SEKOLAH_LIST = Object.values(SEKOLAH_DATA);
+const totalLembaga = SEKOLAH_LIST.length;
+const coverageIndex = COVERAGE_INDEX_ESTIMASI;
 
-// Dihitung manual dari sekolah.geojson (8 features)
-const tierData = [
-  { jenjang: "TK", jumlah: 1, color: "#ec4899" },
-  { jenjang: "SD", jumlah: 3, color: "#ef4444" },
-  { jenjang: "SMP", jumlah: 2, color: "#3b82f6" },
-  { jenjang: "SMK", jumlah: 1, color: "#eab308" },
-  { jenjang: "Pesantren", jumlah: 4, color: "#8b5cf6" },
+// Bucket varian jenjang (SD/MI → SD, SMP/MTs → SMP) ke 5 kategori chart
+function bucketJenjang(jenjang: string): string {
+  if (jenjang.includes("SD")) return "SD";
+  if (jenjang.includes("SMP")) return "SMP";
+  return jenjang; // TK, SMK, Pesantren sudah kanonik
+}
+
+const JENJANG_ORDER = ["TK", "SD", "SMP", "SMK", "Pesantren"];
+const tierCounts = SEKOLAH_LIST.reduce<Record<string, number>>((acc, s) => {
+  const tier = bucketJenjang(s.jenjang);
+  acc[tier] = (acc[tier] ?? 0) + 1;
+  return acc;
+}, {});
+const tierData = JENJANG_ORDER.map((jenjang) => ({
+  jenjang,
+  jumlah: tierCounts[jenjang] ?? 0,
+  color: JENJANG_COLORS[jenjang] ?? "#6b7280",
+}));
+
+const ZONA_ORDER: Array<{ label: string; color: string }> = [
+  { label: "< 5 Menit", color: "#10b981" },
+  { label: "5–10 Menit", color: "#f59e0b" },
+  { label: "> 10 Menit", color: "#ef4444" },
 ];
+const zonaCounts = SEKOLAH_LIST.reduce<Record<string, number>>((acc, s) => {
+  acc[s.zonaWaktu] = (acc[s.zonaWaktu] ?? 0) + 1;
+  return acc;
+}, {});
+const zonaStats = ZONA_ORDER.map((z) => ({ label: z.label, count: zonaCounts[z.label] ?? 0, color: z.color }));
+const zonaAman = SEKOLAH_LIST.filter((s) => s.zonaWaktu !== "> 10 Menit").length;
 
-// DUMMY — akan diupdate ketika data akreditasi asli tersedia
-const akreditasiData = [
-  { status: "A (Unggul)", jumlah: 2, color: "#10b981" },
-  { status: "B (Baik Sekali)", jumlah: 3, color: "#3b82f6" },
-  { status: "C (Baik)", jumlah: 1, color: "#f59e0b" },
-  { status: "Belum Terakreditasi", jumlah: 5, color: "#9ca3af" },
-];
-
-// Berdasarkan hasil network analysis service area
-const travelTimeData = [                                                 
-      { sekolah: "SMK NU Darussalam", zona: "< 5 Menit" },                   
-      { sekolah: "Pondok Pesantren Salaf Darussalam", zona: "< 5 Menit" },   
-      { sekolah: "SMP Al Amiriyyah", zona: "< 5 Menit" },                    
-      { sekolah: "SDN 1 Rejoagung Srono", zona: "5–10 Menit" },              
-      { sekolah: "SD N 2 Rejoagung", zona: "5–10 Menit" },                   
-      { sekolah: "TK Khadijah 203 Rejoagung", zona: "5–10 Menit" },          
-      { sekolah: "MTs Unggulan Darussalam", zona: "5–10 Menit" },            
-      { sekolah: "Pondok Pesantren Darussalam", zona: "5–10 Menit" },        
-      { sekolah: "Pondok Pesantren Al Falah Rejoagung", zona: "> 10 Menit" },
-      { sekolah: "Ponpes manbaul alam", zona: "> 10 Menit" }, 
-      { sekolah: "MI Al Ma'arif Rejoagung", zona: "> 10 Menit" },                     
-    ];     
-
-// estimasi berdasarkan service area coverage
-// ### 1. Zona Sangat Dekat (< 5 Menit)                                       
-                                                                             
-//   • Perhitungan: (1.043.580,97 ÷ 4.255.282,09) × 100%                        
-//   • Hasil: 24,52%                                                            
-                                                                             
-//   ### 2. Zona Aman (< 10 Menit)                                              
-                                                                             
-//   • Perhitungan: (2.911.421,44 ÷ 4.255.282,09) × 100%                        
-//   • Hasil: 68,42% (Wow, angkanya ternyata sangat dekat dengan tebakan dummy  
-//   73% kita di awal!)                                                         
-                                                                             
-//   ### 3. Zona Sedang (< 15 Menit)                                            
-                                                                             
-//   • Perhitungan: (3.628.315,28 ÷ 4.255.282,09) × 100%                        
-//   • Hasil: 85,27%        
-const coverageIndex = 68.4;
-
-// ─── COMPONENT ───────────────────────────────────────────────────────────────
-
+// ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function EducationMetrics() {
   return (
-    <div className="space-y-6">
-      {/* Card 1 — Makro: Total Sekolah */}
-      <Card className="border-l-4 border-l-blue-500">
-        <CardContent className="p-6 flex items-center gap-6">
-          <span className="text-5xl">🏫</span>
-          <div>
-            <p className="text-5xl font-bold text-gray-900">11</p>
-            <p className="text-lg text-gray-600 mt-1">
-              Lembaga Pendidikan Terdata di Desa Rejoagung
-            </p>
-            <p className="text-sm text-gray-400 mt-1">
-              Termasuk SD, SMP, SMK, TK, dan Pondok Pesantren · Tahun 2026
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="bg-white rounded-xl border border-[var(--outline-variant)] shadow-sm flex flex-col h-full">
 
-      {/* Row — 2 Chart Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Card 2 — Bar Chart: Distribusi Jenjang */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Distribusi per Jenjang Pendidikan</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {tierData.length === 0 ? (
-              <div className="flex h-40 items-center justify-center text-muted-foreground">
-                Data tidak tersedia
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={tierData} margin={{ top: 5, right: 10, bottom: 10, left: 0 }}>
-                  <XAxis dataKey="jenjang" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
-                  <Tooltip formatter={(value) => [`${value} lembaga`, "Jumlah"]} />
-                  <Bar dataKey="jumlah" radius={[4, 4, 0, 0]}>
-                    {tierData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Card 3 — Pie Chart: Distribusi Akreditasi */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              Distribusi Akreditasi
-              <span className="text-xs font-normal text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                * data estimasi
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {akreditasiData.length === 0 ? (
-              <div className="flex h-40 items-center justify-center text-muted-foreground">
-                Data tidak tersedia
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={akreditasiData}
-                    dataKey="jumlah"
-                    nameKey="status"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={85}
-                    paddingAngle={3}
-                  >
-                    {akreditasiData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => [`${value} lembaga`, "Jumlah"]} />
-                  <Legend
-                    wrapperStyle={{ flexWrap: "wrap", fontSize: "12px" }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
+      {/* ── Composite Header ──────────────────────────────────────────────── */}
+      <div className="px-5 py-4 border-b border-[var(--outline-variant)]/60 flex items-center gap-3">
+        <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100 shrink-0">
+          <Icon name="school" size={18} className="text-blue-600" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="section-header text-[var(--on-surface)] truncate">Aksesibilitas Pendidikan</p>
+        </div>
+        <span className="shrink-0 label-caps px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+          {totalLembaga} lembaga
+        </span>
       </div>
 
-      {/* Card 4 — Travel Time Matrix Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Matriks Waktu Tempuh ke Sekolah</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nama Lembaga</TableHead>
-                <TableHead>Zona Waktu Tempuh</TableHead>
-                <TableHead>Indikator</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {travelTimeData.map((row) => {
-                const zona = row.zona;
-                const color =
-                  zona === "< 5 Menit"
-                    ? { bg: "#dcfce7", text: "#15803d", dot: "#22c55e" }
-                    : zona === "5–10 Menit"
-                    ? { bg: "#fef9c3", text: "#854d0e", dot: "#eab308" }
-                    : { bg: "#fee2e2", text: "#b91c1c", dot: "#ef4444" };
-                return (
-                  <TableRow key={row.sekolah}>
-                    <TableCell className="font-medium">{row.sekolah}</TableCell>
-                    <TableCell>{row.zona}</TableCell>
-                    <TableCell>
-                      <span
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full"
-                        style={{ backgroundColor: color.bg, color: color.text }}
-                      >
-                        <span
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: color.dot }}
-                        />
-                        {zona === "< 5 Menit"
-                          ? "Akses Baik"
-                          : zona === "5–10 Menit"
-                          ? "Akses Sedang"
-                          : "Perlu Perhatian"}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {/* ── Key Metrics Row ───────────────────────────────────────────────── */}
+      <div className="grid grid-cols-3 gap-px bg-[var(--outline-variant)]/30 border-b border-[var(--outline-variant)]/60">
+        {/* Total Sekolah */}
+        <div className="bg-white px-4 py-3 col-span-1">
+          <p className="micro-copy text-[var(--text-muted)]">Total Lembaga</p>
+          <p className="text-2xl font-extrabold tracking-tight text-[var(--on-surface)] font-[var(--font-geist-sans)]">{totalLembaga}</p>
+        </div>
+        {/* Coverage */}
+        <div className="bg-white px-4 py-3 col-span-1">
+          <p className="micro-copy text-[var(--text-muted)]">Cakupan Akses</p>
+          <p className="text-2xl font-extrabold tracking-tight text-[var(--primary)] font-[var(--font-geist-sans)]">{coverageIndex}%</p>
+        </div>
+        {/* Zona aman */}
+        <div className="bg-white px-4 py-3 col-span-1">
+          <p className="micro-copy text-[var(--text-muted)]">Zona Aman</p>
+          <p className="text-2xl font-extrabold tracking-tight text-emerald-600 font-[var(--font-geist-sans)]">{zonaAman}</p>
+          <p className="micro-copy text-[var(--text-muted)]">sekolah ≤ 10 mnt</p>
+        </div>
+      </div>
 
-      {/* Card 5 — Accessibility Coverage Index */}
-      <Card className="border-l-4 border-l-emerald-500">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            Indeks Cakupan Aksesibilitas
-            <span className="text-xs font-normal text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-              * estimasi
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-end gap-3">
-            <p className="text-5xl font-bold text-emerald-600">{coverageIndex}%</p>
-            <p className="text-sm text-gray-500 pb-2 leading-snug">
-              Estimasi pemukiman dalam<br />
-              <strong>zona aman (&lt; 10 menit)</strong> ke sekolah terdekat
+      {/* ── Chart + Coverage Bar ──────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 divide-x divide-[var(--outline-variant)]/40 flex-1">
+
+        {/* Left: Bar Chart — Distribusi Jenjang */}
+        <div className="p-4 flex flex-col">
+          <p className="label-caps text-[var(--text-muted)] mb-2">Per Jenjang</p>
+          <div className="flex-1 min-h-[140px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={tierData} margin={{ top: 4, right: 4, bottom: 16, left: -24 }}>
+                <XAxis
+                  dataKey="jenjang"
+                  tick={{ fontSize: 10, fill: "#64748b" }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fontSize: 9 }}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={false}
+                />
+                <Tooltip content={<CustomTooltip unit="lembaga" />} />
+                <Bar dataKey="jumlah" radius={[4, 4, 0, 0]} maxBarSize={28}>
+                  {tierData.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Right: Zona Waktu Tempuh */}
+        <div className="p-4 flex flex-col gap-2">
+          <p className="label-caps text-[var(--text-muted)] mb-1">Waktu Tempuh</p>
+          {/* Zona summary */}
+          <div className="space-y-2">
+            {zonaStats.map((z) => (
+              <div key={z.label} className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: z.color }} />
+                <div className="flex-1 bg-[var(--surface-container-low)] rounded-full h-1.5">
+                  <div
+                    className="h-1.5 rounded-full transition-all duration-700"
+                    style={{ width: `${(z.count / totalLembaga) * 100}%`, background: z.color }}
+                  />
+                </div>
+                <span className="micro-copy text-[var(--text-muted)] shrink-0">{z.count} sekolah</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Coverage progress bar */}
+          <div className="mt-3 pt-3 border-t border-[var(--outline-variant)]/50">
+            <div className="flex justify-between mb-1">
+              <p className="micro-copy text-[var(--text-muted)]">Coverage Index</p>
+              <Badge className="bg-amber-50 text-amber-700 border border-amber-200 label-caps">
+                * estimasi
+              </Badge>
+            </div>
+            <div className="w-full bg-[var(--surface-container)] rounded-full h-2">
+              <div
+                className="h-2 rounded-full bg-[var(--primary)] transition-all duration-700"
+                style={{ width: `${coverageIndex}%` }}
+              />
+            </div>
+            <p className="micro-copy text-[var(--text-muted)] mt-1">
+              {coverageIndex}% pemukiman dalam zona &lt; 10 menit
             </p>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-3">
-            <div
-              className="h-3 rounded-full transition-all duration-700"
-              style={{
-                width: `${coverageIndex}%`,
-                background: "linear-gradient(to right, #10b981, #22c55e)",
-              }}
-            />
-          </div>
-          <p className="text-xs text-gray-400">
-            Dihitung berdasarkan hasil Network Analysis Service Area (10 
-            Menit) dengan luas total Desa Rejoagung 4,25 juta m² (Tim Geodesi KKN-PPM  
-            UGM 2026).
-          </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* ── Metadata Footer ──────────────────────────────────────────────────── */}
+      <div className="px-5 py-3 border-t border-[var(--outline-variant)]/60">
+        <p className="micro-copy text-[var(--text-muted)]">
+          Sumber: Network Analysis Service Area · Sekolah.geojson · KKN-PPM UGM 2026
+        </p>
+      </div>
+
     </div>
   );
 }

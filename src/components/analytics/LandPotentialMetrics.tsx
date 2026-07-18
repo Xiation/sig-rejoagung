@@ -1,177 +1,209 @@
 // src/components/analytics/LandPotentialMetrics.tsx
-// extracted from dusun.geojson properties
+// Phase 3 — Full-width Composite Card: header + resource chart + threat matrix + policy
+// MacroStats telah dipindah ke analyticsDashboard.tsx (promoted to Macro Scorecard Row)
+// DESIGN_SYS.md Bab 3.B
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-// ─── DATA (hardcoded dari dusun.geojson properties) ──────────────────────────
+"use client";
 
-const dusunData = [
-  {
-    id: "003",
-    nama: "Sumberagung",
-    potensiEkonomi: "Sangat Tinggi",
-    produksiPadi: "6.4 ton/ha",
-    ip: "IP 200",
-    komoditasPertanian: "Padi Sawah",
-    jenisTanaman: "Padi, Jagung, Pisang",
-    hortikultura: "Pisang, Pepaya",
-    energi: "PLTS Atap, Biogas Ternak",
-    ternak: "Sapi, Kambing, Ayam",
-    ikan: "Nila, Lele",
-    agrowisata: "Wisata Sawah dan Mata Air",
-    kerajinan: "Anyaman Bambu, Produk Olahan Kakao",
-    rekomendasi: "Intensifikasi SRI, Sambung Samping Kakao, Sertifikasi Organik, PLTS Komunal",
-  },
-  {
-    id: "001",
-    nama: "Sumberagung Kidul",
-    potensiEkonomi: "Tinggi",
-    produksiPadi: "5.8 ton/ha",
-    ip: "IP 100",
-    komoditasPertanian: "Hortikultura & Peternakan Sapi",
-    jenisTanaman: "Cabai, Tomat, Jagung, Ubi Jalar",
-    hortikultura: "Cabai Merah, Tomat, Terong, Bawang Merah",
-    energi: "Biogas Ternak Sapi, PLTS Atap",
-    ternak: "Sapi Potong, Kambing, Domba, Ayam Kampung",
-    ikan: "Lele, Gurami",
-    agrowisata: "Wisata Kebun dan Peternakan Terpadu",
-    kerajinan: "Kerajinan Bambu",
-    rekomendasi: "Sistem irigasi tetes, Integrasi tanaman-ternak, Biogas komunal, Sertifikasi GAP hortikultura",
-  },
-  {
-    id: "002",
-    nama: "Sumbergroto",
-    potensiEkonomi: "Sangat Tinggi",
-    produksiPadi: "7.2 ton/ha",
-    ip: "IP 300",
-    komoditasPertanian: "Padi Sawah Irigasi & Ikan Air Tawar",
-    jenisTanaman: "Padi, Melon, Semangka, Edamame, Jagung hibrida",
-    hortikultura: "Melon, Semangka, Edamame, Kacang panjang",
-    energi: "PLTMH (aliran sungai), PLTS Atap",
-    ternak: "Sapi, Itik, Ayam Petelur",
-    ikan: "Nila, Lele, Gurami, Udang Galah",
-    agrowisata: "Wisata Sawah, Mina Padi, Edukasi Pertanian",
-    kerajinan: "Olahan Ikan",
-    rekomendasi: "Mina padi massal, PLTMH sungai, Agrowisata Banyuwangi Festival, Ekspor edamame",
-  },
-  {
-    id: "004",
-    nama: "Sumbergroto Kidul",
-    potensiEkonomi: "Tinggi",
-    produksiPadi: "5.5 ton/ha",
-    ip: "IP 200",
-    komoditasPertanian: "Lahan Basah & Budidaya Perikanan",
-    jenisTanaman: "Padi rawa (Inpara 3/8), Pandan wangi, Mendong",
-    hortikultura: "Kangkung air, Genjer, Talas",
-    energi: "PLTS Atap, Biogas Itik/Ayam",
-    ternak: "Itik, Entog, Ayam Kampung",
-    ikan: "Nila, Mujair, Udang Galah, Gabus",
-    agrowisata: "Ekowisata Lahan Basah, Wisata Riparian",
-    kerajinan: "Anyaman Pandan, Tikar Mendong, Kerajinan Bambu",
-    rekomendasi: "Varietas Inpara toleran rendaman, Tambak air tawar, Sertifikasi kerajinan pandan ekspor, Konservasi riparian PES",
-  },
-];
+import { Badge } from "@/components/ui/badge";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer,
+} from "recharts";
+import Icon from "@/components/ui/Icon";
+import CustomTooltip from "./customTooltip";
+import { useState } from "react"
+import { produksiPertanian, KATEGORI_LIST, KATEGORI_COLORS } from "@/constants/produksiPertanian";
+import { resourceFrequency, threats, executiveSummary } from "@/constants/landPotential";
 
-// ─── HELPER ──────────────────────────────────────────────────────────────────
 
-function PotensiBadge({ level }: { level: string }) {
-  const isSangatTinggi = level === "Sangat Tinggi";
-  return (
-    <span
-      className="inline-block text-xs font-semibold px-2.5 py-1 rounded-full"
-      style={{
-        backgroundColor: isSangatTinggi ? "#dcfce7" : "#dbeafe",
-        color: isSangatTinggi ? "#15803d" : "#1d4ed8",
-      }}
-    >
-      🌟 Potensi {level}
-    </span>
-  );
-}
-
-// ─── COMPONENT ───────────────────────────────────────────────────────────────
-
+// ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function LandPotentialMetrics() {
+const [activeKategori, setActiveKategori] = useState<string>(KATEGORI_LIST[3]);
+const produksiKategori = produksiPertanian
+                        .filter((item) => item.kategori === activeKategori)
+                        .sort((a, b) => b.jumlah - a.jumlah);
+const totalTonaseKategori = produksiKategori.reduce((sum, item) => sum + item.jumlah, 0);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {dusunData.map((dusun) => (
-        <Card key={dusun.id} className="flex flex-col">
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <CardTitle className="text-lg">Dusun {dusun.nama}</CardTitle>
-                <CardDescription className="mt-1">
-                  {dusun.produksiPadi} · {dusun.ip}
-                </CardDescription>
-              </div>
-              <PotensiBadge level={dusun.potensiEkonomi} />
-            </div>
-          </CardHeader>
+    <div className="bg-white rounded-xl border border-[var(--outline-variant)] shadow-sm flex flex-col">
 
-          <CardContent className="flex flex-col gap-4 flex-1">
-            {/* Zonasi Potensi Utama */}
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                📦 Zonasi Potensi Utama
-              </p>
-              <ul className="text-sm text-gray-700 space-y-1 pl-1">
-                <li>
-                  <span className="text-gray-400">Pertanian:</span>{" "}
-                  {dusun.komoditasPertanian}
-                </li>
-                <li>
-                  <span className="text-gray-400">Tanaman:</span>{" "}
-                  {dusun.jenisTanaman}
-                </li>
-                <li>
-                  <span className="text-gray-400">Hortikultura:</span>{" "}
-                  {dusun.hortikultura}
-                </li>
-                <li>
-                  <span className="text-gray-400">Agrowisata:</span>{" "}
-                  {dusun.agrowisata}
-                </li>
-              </ul>
-            </div>
+      {/* ── Composite Header ──────────────────────────────────────────────── */}
+      <div className="px-5 py-4 border-b border-[var(--outline-variant)]/60 flex items-center gap-3">
+        <div className="w-8 h-8 bg-[var(--surface-container)] rounded-lg flex items-center justify-center border border-[var(--outline-variant)] shrink-0">
+          <Icon name="agriculture" size={18} className="text-[var(--primary)]" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="section-header text-[var(--on-surface)]">Potensi Lahan & SDA per Dusun</p>
+        </div>
+        <span className="shrink-0 label-caps px-2.5 py-1 rounded-full bg-[var(--primary-container)] text-[var(--on-primary-container)] border border-emerald-200">
+          4 dusun
+        </span>
+      </div>
 
-            {/* Energi Terbarukan */}
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                ⚡ Energi Terbarukan
-              </p>
-              <p className="text-sm text-gray-700">{dusun.energi}</p>
-            </div>
+      {/* ── Two-Column Body: Chart + Threats ──────────────────────────────── */}
+      {/* DESIGN_SYS.md: large chart panel 8 cols + threats 4 cols */}
+      <div className="grid grid-cols-12 gap-0 divide-x divide-[var(--outline-variant)]/40">
 
-            {/* Peternakan & Perikanan */}
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                🐟 Peternakan & Perikanan
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="text-gray-400">Ternak:</span> {dusun.ternak}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="text-gray-400">Ikan:</span> {dusun.ikan}
-              </p>
-            </div>
+        {/* Left: Resource Frequency Bar Chart — 8 cols */}
+        <div className="col-span-12 lg:col-span-8 p-5 flex flex-col">
+          <div className="flex items-center gap-2 mb-1">
+            <p className="label-caps text-[var(--text-muted)]">
+              Frekuensi Distribusi Sektor SDA antar Dusun
+            </p>
+          </div>
+          <p className="micro-copy text-[var(--text-muted)] mb-3">
+            Menunjukkan seberapa banyak dusun yang memiliki sektor/komoditas tertentu (maks. 4)
+          </p>
+          <div className="flex-1" style={{ minHeight: 220 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={resourceFrequency}
+                margin={{ top: 4, right: 12, bottom: 32, left: -8 }}
+              >
+                <XAxis
+                  dataKey="nama"
+                  tick={{ fontSize: 11, fill: "#64748b" }}
+                  angle={-20}
+                  textAnchor="end"
+                  interval={0}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={false}
+                  domain={[0, 4]}
+                  tickCount={5}
+                />
+                <Tooltip content={<CustomTooltip unit="dusun" />} />
+                <Bar dataKey="jumlah" radius={[4, 4, 0, 0]} maxBarSize={36}>
+                  {resourceFrequency.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-            {/* Kerajinan Lokal */}
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                🎨 Kerajinan Lokal
-              </p>
-              <p className="text-sm text-gray-700">{dusun.kerajinan}</p>
-            </div>
+        {/* Right: Threat Matrix — 4 cols */}
+        <div className="col-span-12 lg:col-span-4 p-5 flex flex-col">
+          <div className="flex items-center gap-2 mb-1">
+            <Icon name="warning" size={16} className="text-[var(--destructive)]" />
+            <p className="label-caps text-[var(--text-muted)]">Matriks Ancaman SDA</p>
+          </div>
+          <p className="micro-copy text-[var(--text-muted)] mb-3">
+            Dikompilasi dari 4 dusun — perlu prioritas mitigasi
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {threats.map((threat) => (
+              <Badge
+                key={threat}
+                className="bg-rose-50 text-rose-600 border border-rose-100 body-base font-medium hover:bg-rose-100 transition-colors"
+              >
+                {threat}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </div>
 
-            {/* Rekomendasi Kebijakan */}
-            <div className="bg-muted/50 p-3 rounded-md border-l-4 border-primary mt-auto">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                💡 Rekomendasi Kebijakan
-              </p>
-              <p className="text-sm text-gray-700 leading-relaxed">{dusun.rekomendasi}</p>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {/* ── Produksi Pertanian & Perkebunan ──────────────────────────────── */}
+      <div className="border-t border-[var(--outline-variant)]/60 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Icon name="grass" size={16} className="text-[var(--primary)]" />
+          <p className="label-caps text-[var(--text-muted)]">
+            Produksi Pertanian & Perkebunan (Ton/Tahun)
+          </p>
+          <span className="ml-auto label-caps px-2.5 py-1 rounded-full bg-[var(--surface-container)] text-[var(--on-surface)] border border-[var(--outline-variant)]">
+            Total {totalTonaseKategori.toLocaleString("id-ID")} ton
+          </span>
+        </div>
+        <p className="micro-copy text-[var(--text-muted)] mb-3">
+          Rekapitulasi hasil produksi per komoditas — pilih kategori untuk melihat rincian
+        </p>
+
+        {/* Tab switcher */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {KATEGORI_LIST.map((kategori) => (
+            <button
+              key={kategori}
+              type="button"
+              onClick={() => setActiveKategori(kategori)}
+              className={`label-caps px-3 py-1.5 rounded-full border transition-colors ${
+                activeKategori === kategori
+                  ? "bg-emerald-50 border-emerald-600 text-emerald-600"
+                  : "bg-white border-slate-200 text-slate-700"
+              }`}
+            >
+              {kategori}
+            </button>
+          ))}
+        </div>
+
+        {/* Scrollable horizontal bar chart — semua item tampil, tidak di-top-N-kan */}
+        <div className="max-h-72 overflow-y-auto">
+          <ResponsiveContainer width="100%" height={Math.max(produksiKategori.length * 32, 120)}>
+            <BarChart
+              data={produksiKategori}
+              layout="vertical"
+              margin={{ top: 4, right: 24, bottom: 4, left: 8 }}
+            >
+              <XAxis
+                type="number"
+                tick={{ fontSize: 11, fill: "#64748b" }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                type="category"
+                dataKey="komoditas"
+                tick={{ fontSize: 11, fill: "#64748b" }}
+                axisLine={false}
+                tickLine={false}
+                width={110}
+              />
+              <Tooltip content={<CustomTooltip unit="ton" />} />
+              <Bar dataKey="jumlah" radius={[0, 4, 4, 0]} maxBarSize={18}>
+                {produksiKategori.map((entry) => (
+                  <Cell key={entry.komoditas} fill={KATEGORI_COLORS[activeKategori]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* ── Executive Policy Summary ──────────────────────────────────────── */}
+      <div className="border-t border-[var(--outline-variant)]/60">
+        <div className="flex items-start gap-4 p-5 bg-emerald-50/60">
+          {/* Icon mark */}
+          <div className="w-10 h-10 bg-white rounded-lg shadow-sm border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+            <Icon name="gavel" size={20} className="text-[var(--primary)]" />
+          </div>
+          <div>
+            <p className="label-caps text-[var(--primary)] mb-1.5">
+              Sintesis Kebijakan Strategis 2026
+            </p>
+            <p className="body-base text-emerald-900 leading-relaxed max-w-4xl">
+              {executiveSummary}
+            </p>
+            <p className="micro-copy text-[var(--primary)] mt-2">
+              Untuk analisis mendalam per dusun, gunakan Peta Interaktif → Modul Potensi Lahan
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Metadata Footer ───────────────────────────────────────────────── */}
+      <div className="px-5 py-3 border-t border-[var(--outline-variant)]/60">
+        <p className="micro-copy text-[var(--text-muted)]">
+          Sumber: Dusun.geojson · Analisis Potensi SDA Desa Rejoagung · KKN-PPM UGM 2026
+        </p>
+      </div>
+
     </div>
   );
 }

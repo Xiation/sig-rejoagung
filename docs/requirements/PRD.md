@@ -47,7 +47,8 @@ The platform adopts a *Component-Driven Architecture* in React. All spatial laye
 
 | **Feature ID** | **UI Component (shadcn/ui)** | **Functional Description** | **Geodesy Data Source** | **Target KKN Core Theme** |
 | :--- | :--- | :--- | :--- | :--- |
-| **F-01** | `Layout & Sidebar` | Main left-hand navigation panel to toggle map modules, integrated with a global theme switcher (*Dark/Light Mode*). | - | System Foundation |
+| **F-00** | `Dashboard Analytics` | Dedicated full-page composite bento grid summarizing metrics for village assets, potential, and school access using Recharts. | - | System Overview |
+| **F-01** | `Layout & Sidebar` | Fixed left-hand navigation panel (Bento Shell) to toggle map modules and dashboard. | - | System Foundation |
 | **F-02** | `Map Viewer (Leaflet)` | Main base map *canvas* (*OpenStreetMap*) equipped with interactive zoom control and *bounds restriction* limited to the administrative boundary of Rejoagung Village. | `/data/batas-administrasi.geojson`, `/data/jaringan-jalan.geojson`, `/data/sungai.geojson` | System Foundation |
 | **F-03** | `Module: Assets & Public Facilities` | Renders *custom markers* for village infrastructure based on structural data categories. Clicking a marker triggers an informative *pop-up* displaying the asset name and physical condition. | **Vector Data (Point)**:<br>- `/data/pemerintahan.geojson`<br>- `/data/fasilitas-pendidikan.geojson`<br>- `/data/tempat-ibadah.geojson` | Poverty Alleviation |
 | **F-04** | `Module: Village Potential` | Spatial visualization of agricultural and industrial zoning (Farming, Coconut Plantation, Local MSMEs, Eco-tourism). Displays a summary of production metrics on a contextual *card panel*. | **Vector Data (Point/Polygon)**:<br>- `/data/potensi-desa.geojson` | Economic Development |
@@ -55,7 +56,7 @@ The platform adopts a *Component-Driven Architecture* in React. All spatial laye
 
 ## **4. Data Architecture (Static GeoJSON Schema)**
 
-To minimize maintenance overhead, the system bypasses external databases. Spatial attributes are served natively as flat `.geojson` files located inside the `/public/data/GJSON_fasum` directory and fetched client-side via `/data/filename.geojson`.
+To minimize maintenance overhead, the system bypasses external databases. Spatial attributes are served natively as flat `.geojson` files located inside the `/public/data/` directory (categorized into `akses`, `fasum`, and `potensi`) and fetched client-side via `/data/filename.geojson`.
 
 ### **Example Data Schema for `aset-desa.geojson` Component:**
 
@@ -117,9 +118,9 @@ These features are non-negotiable and must be production-ready by Week 4. If any
 - **Description:** Utilizes a `shadcn/ui` Sidebar primitive populated with checkboxes or switches to dynamically mount/unmount specific spatial layers on the map canvas.
 - **Rationale:** Minimizes visual clutter. Users can isolate single operational issues on demand (e.g., hiding commercial layers to focus entirely on school dropout vulnerabilities).
 
-### **M-04: On-Click Information Display (Mobile-First Pop-up)**
-- **Description:** Triggers information boxes using Leaflet's native Pop-up binder on an **On-Click (Tap)** event listener rather than an On-Hover trigger.
-- **Mobile-First Rationale:** Since village officials will primarily access the application via smartphones, desktop hover interactions are functionally non-existent. Tap interaction models must be prioritized as the baseline MVP, while hover features are deferred to post-MVP development.
+### **M-04: On-Click Expanded Dialog (InfoModal)**
+- **Description:** Triggers an expanded `InfoModal` wrapper displaying detailed property information inside a stylized 2-column modal dialog instead of native Leaflet pop-ups.
+- **Mobile-First Rationale:** Dialogs provide significantly better readability, scrolling capability, and touch targets for mobile devices compared to cramped native map popups.
 
 ---
 
@@ -134,13 +135,12 @@ Development on these components may only commence during Week 5, provided all co
 - **Description:** Integrates the `leaflet.markercluster` plugin to aggregate dense point groupings into numeric counters that automatically decluster upon zooming in.
 - **Note:** Moved to the product backlog because KKN data collections generally yield low point densities, rendering standard markers perfectly readable without grouping algorithms.
 
-### **F-03: Global Statistics Floating Card Panel**
-- **Description:** A floating overlays card (`shadcn/ui` card primitive) anchored to a map viewport corner displaying hardcoded aggregates (e.g., *"Total Registered MSMEs: 12"*).
-- **Note:** Purely informational and static, making it a low-priority asset compared to the interactive maps canvas.
+### **F-03: Comprehensive Analytics Dashboard**
+- **Description:** A dedicated dashboard view using a Composite Bento Grid structure containing macro scorecards and complex charts (Recharts) summarizing village data.
+- **Note:** Successfully implemented as part of the core product evolution replacing static floating panels.
 
-### **F-04: Global Dark / Light Mode Switcher**
-- **Description:** A holistic design theme provider switch integrated via `next-themes`.
-- **Note:** Cosmestic value only. High-contrast **Light Mode** must remain the unalterable system default to ensure readability for field officials operating under direct sunlight.
+### **F-04: Enforced Light Mode Theme**
+- **Description:** High-contrast **Light Mode** remains the unalterable system default (M3 design system) to ensure maximum readability for field officials operating under direct sunlight. Dark mode toggle is deliberately excluded to maintain visual consistency on mobile screens outdoors.
 
 ---
 
@@ -160,8 +160,8 @@ Development on these components may only commence during Week 5, provided all co
 
 To accelerate development speed and bypass custom asset rendering overhead, the agent must implement the following tactical logic:
 1. **Zero Custom SVG Icons for MVP:** Do not spend time importing or adjusting external icon sets. Use Leaflet's native `L.circleMarker` utility with high-contrast distinct hex fills:
-   - **Governance/Public Facilities:** Blue (`#3b82f6`)
-   - **Healthcare Facilities:** Red (`#ef4444`)
+   - **Governance/Office Centers:** Orange (`#ea580c`)
+   - **Places of Worship:** Blue (`#2563eb`)
    - **Educational Facilities:** Emerald Green (`#10b981`)
 2. **Standard Functional Property Filters:** Filter arrays natively inside React during rendering cycles by evaluating the `"kategori"` tag value embedded inside the GeoJSON feature properties.
 

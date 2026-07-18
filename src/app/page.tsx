@@ -1,51 +1,95 @@
-// page.tsx
+// src/app/page.tsx
+// Phase 2 — Bento Shell Main Viewport
+// Layout: Fixed Sidebar (18rem) + Fixed TopAppBar (4rem) + Liquid main content
+// Sumber: docs/DESIGN/DESIGN_SYS.md Bab 2
+
 "use client";
 
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import MapViewer from "@/components/map/MapViewer";
+import TopAppBar from "@/components/layout/TopAppBar";
+import dynamic from "next/dynamic";
 import AnalyticsDashboard from "@/components/analytics/analyticsDashboard";
-export default function DashboardGIS(){
-  const [activeModule, setActiveModule] = useState("aset");
-  const getHeaderTitle = () => {
-    switch(activeModule){
-      case "dashboard":
-        return "Dashboard Analisis Desa Rejoagung";
-      case "aset":
-        return "Pemetaan Persebaran Aset & Fasilitas Umum Desa";
-      case "potensi":
-        return "Visualisasi Potensi Lahan Perkebunan & Sebaran Sumber Daya Alam";
-      case "sekolah":
-        return "Analisis Spasial Jangkauan & Aksesibilitas Sekolah";
-      default:
-        return "Web GIS Desa Rejoagung";
-    }
-  };
+
+// Dynamic import for Leaflet — prevents SSR hydration mismatch
+const MapViewer = dynamic(() => import("@/components/map/MapViewer"), {
+  ssr: false,
+});
+
+// ── Module metadata ──────────────────────────────────────────────────────────
+const MODULE_META: Record<
+  string,
+  { title: string; badge: string; badgeVariant: "primary" | "map" | "default" }
+> = {
+  dashboard: {
+    title: "Analytics Dashboard",
+    badge: "Ringkasan",
+    badgeVariant: "primary",
+  },
+  aset: {
+    title: "Pemetaan Aset & Fasilitas Umum Desa",
+    badge: "Peta Interaktif",
+    badgeVariant: "map",
+  },
+  potensi: {
+    title: "Visualisasi Potensi Lahan & Sumber Daya Alam",
+    badge: "Peta Interaktif",
+    badgeVariant: "map",
+  },
+  sekolah: {
+    title: "Analisis Spasial Aksesibilitas Sekolah",
+    badge: "Peta Interaktif",
+    badgeVariant: "map",
+  },
+};
+
+export default function DashboardGIS() {
+  const [activeModule, setActiveModule] = useState<string>("aset");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const meta = MODULE_META[activeModule] ?? MODULE_META["aset"];
+  const isMapView = activeModule !== "dashboard";
 
   return (
-    <div className="flex h-screen w-screen">
-      {/* render sidebar: send state and router function via props */}
-      <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
-      <main className="flex-1 flex flex-col relative h-full overflow-hidden">
-        
-        {/* Header */}
-        <header className="h-16 border-b bg-background flex items-center px-6 z-10 shadow-sm shrink-0">
-          <h1 className="text-lg font-semibold">{getHeaderTitle()}</h1>
-        </header>
-        
-        {/* Conditional view area */}
-        <div className="flex-1 p-4 bg-muted/30 h-full overflow-hidden">
-          {activeModule === "dashboard" ? (
-            <AnalyticsDashboard/>
+    // Root shell: full-screen, row layout
+    <div className="flex h-screen w-screen overflow-hidden bg-[var(--surface-container-low)]">
+
+      {/* ── Sidebar — fixed 288px di desktop (lg:), slide-in drawer di mobile/tablet ── */}
+      <Sidebar
+        activeModule={activeModule}
+        setActiveModule={setActiveModule}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+
+      {/* ── Main Viewport — offset by sidebar cuma di desktop (lg:) ── */}
+      <div className="flex flex-col flex-1 h-full ml-0 lg:ml-72">
+
+        {/* ── Fixed TopAppBar (64px) ── */}
+        <TopAppBar
+          title={meta.title}
+          badge={meta.badge}
+          badgeVariant={meta.badgeVariant}
+          onMenuClick={() => setSidebarOpen(true)}
+        />
+
+        {/* ── Scrollable / Fluid Content Area ── */}
+        {/* mt-16 = offset TopAppBar height; p-6 = DESIGN_SYS global padding (desktop only, map full-bleed di mobile) */}
+        <main className="flex-1 mt-16 overflow-hidden">
+          {isMapView ? (
+            // Map view: full-bleed di mobile/tablet, padded+rounded card di desktop (lg:)
+            <div className="w-full h-full lg:p-6">
+              <div className="w-full h-full lg:rounded-xl overflow-hidden lg:border border-[var(--outline-variant)] lg:shadow-sm bg-white">
+                <MapViewer activeModule={activeModule} />
+              </div>
+            </div>
           ) : (
-            <div className="w-full h-full rounded-xl overflow-hidden border shadow-inner bg-muted/50">
-              {/* Kirim state modul aktif ke MapViewer */}
-              <MapViewer activeModule={activeModule} />
+            // Dashboard view: scrollable, full-width
+            <div className="w-full h-full overflow-y-auto">
+              <AnalyticsDashboard />
             </div>
           )}
-        </div>
-
         </main>
+      </div>
     </div>
   );
 }

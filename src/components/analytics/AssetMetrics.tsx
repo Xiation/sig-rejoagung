@@ -9,6 +9,7 @@ import {
 import {
     assetsSummary, categoryData, ownershipData
 } from "@/constants/assetsSummary";
+import Icon from "@/components/ui/Icon";
 
 export default function AssetMetrics(){
     return (
@@ -18,12 +19,12 @@ export default function AssetMetrics(){
         {assetsSummary.map((stat) => (
           <Card
             key={stat.id}
-            className="border shadow-sm"
-            style={{ backgroundColor: stat.bgColor, borderColor: stat.borderColor }}
+            className="bg-white border border-slate-100 shadow-sm shadow-emerald-900/5 rounded-xl"
+            // style={{ backgroundColor: stat.bgColor, borderColor: stat.borderColor }}
           >
             <CardContent className="p-5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <span className="text-2xl">{stat.icon}</span>
+                <Icon name={stat.icon} size={28} className="text-[var(--on-surface)]" />
                 <span
                   className="text-xs font-semibold px-2 py-0.5 rounded-full"
                   style={{
@@ -35,7 +36,7 @@ export default function AssetMetrics(){
                 </span>
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900 leading-none">
+                <p className="text-2xl font-bold text-gray-900 leading-none">
                   {stat.value}
                   <span className="text-base font-medium text-gray-500 ml-1">
                     {stat.unit}
@@ -53,7 +54,7 @@ export default function AssetMetrics(){
         {/* Panel Kiri — Donut Chart: Status Kepemilikan */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Distribusi Status Kepemilikan</CardTitle>
+            <CardTitle className="label-caps text-slate-500">Distribusi Status Kepemilikan</CardTitle>
           </CardHeader>
           <CardContent>
             {ownershipData.length === 0 ? (
@@ -93,7 +94,7 @@ export default function AssetMetrics(){
         {/* Panel Kanan — Bar Chart: Distribusi Kategori */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Rekapitulasi per Kategori Aset</CardTitle>
+            <CardTitle className="label-caps text-slate-500">Rekapitulasi per Kategori Aset</CardTitle>
           </CardHeader>
           <CardContent>
             {categoryData.length === 0 ? (

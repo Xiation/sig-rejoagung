@@ -45,6 +45,7 @@ The Interactive Web GIS Platform for Rejoagung Village is architected as a **Zer
 All geospatial features are ingested as standard `WGS 84 (EPSG:4326)` geographical coordinates (Longitude, Latitude) to eliminate runtime projection transformations.
 
 ### **A. Folder Directory Alignment**
+the name of the data files are only example and may different to what are actually in the folder, please refer to `docs/requirements/PRD.md` on section 4 regarding `Data Architecture (Static GeoJSON Schema)`
 
 ```text
 workspace/sig-rejoagung/
@@ -137,7 +138,7 @@ The viewport layout inside `src/app/page.tsx` implements a 2-column structure go
 * **Collapsible Sheet Overlays:** The sidebar collapses completely into a native mobile sheet triggered via a header hamburger toggle.
 * **Conditional Metrics Overlay:**
 * **Dashboard Mode:** Stacks analytics cards and Recharts panels vertically inside a responsive scrollable block.
-* **Map Modes:** Analytical indicators render as a custom **Floating Card Panel** overlaying the active Leaflet canvas using translucent backdrops (`bg-background/80 backdrop-blur-md`). The card features tap or swipe-down toggle hooks to maintain full touchscreen map navigation control in the field.
+* **Map Modes:** Interactive points and polygons trigger a custom **InfoModal** (Expanded Dialog) wrapper (`max-w-2xl` with a stylized M3 translucent backdrop). It replaces native Leaflet popups to provide readable, 2-column detailed data views optimized for touch interactions.
 
 
 

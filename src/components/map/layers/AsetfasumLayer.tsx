@@ -8,29 +8,29 @@ import L from "leaflet";
 import InfoModal from "../InfoModal";
 
 function getMarkerStyle(source: string): L.CircleMarkerOptions {
-  if (source.includes("pemerintah")) {
+  if (source.includes("Pemerintahan")) {
     return {
       radius: 10,
-      fillColor: "#ea580c",   // Orange — Pemerintahan
+      fillColor: FASUM_COLORS.pemerintah,
       color: "#ffffff",
       weight: 2,
       opacity: 1,
       fillOpacity: 0.9,
     };
-  } if (source.includes("tempat")) {
+  } if (source.includes("Ibadah")) {
     return {
       radius: 8,
-      fillColor: "#2563eb",   // Blue — Tempat Ibadah
+      fillColor: FASUM_COLORS["tempat ibadah"],
       color: "#ffffff",
       weight: 2,
       opacity: 1,
       fillOpacity: 0.9,
     };
   }
-  if (source.includes("pendidikan")) {
+  if (source.includes("Pendidikan")) {
     return {
       radius: 8,
-      fillColor: "#10b981",   // Emerald Green — Pendidikan
+      fillColor: FASUM_COLORS.pendidikan,
       color: "#ffffff",
       weight: 2,
       opacity: 1,
@@ -41,15 +41,74 @@ function getMarkerStyle(source: string): L.CircleMarkerOptions {
   return { radius: 7, fillColor: "#6b7280", color: "#ffffff", weight: 2, fillOpacity: 0.8 };
 }
 
+const FASUM_COLORS: Record<string, string> = {
+  pemerintah: "#ea580c",   // Orange — Pemerintahan
+  "tempat ibadah": "#2563eb",   // Blue — Tempat Ibadah
+  pendidikan: "#10b981",   // Emerald Green — Pendidikan
+};
+
+function FasumLegend(){
+  return (
+    <div style={{
+      position: "absolute",
+      top: "16px",
+        right: "16px",
+        zIndex: 1000,
+        background: "rgba(255,255,255,0.95)",
+        backdropFilter: "blur(8px)",
+        borderRadius: "12px",
+        padding: "12px 16px",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+        pointerEvents: "none",
+        minWidth: "180px",
+    }}
+    >
+      <p
+      style={{
+          fontSize: "11px",
+          fontWeight: 700,
+          color: "#374151",
+          textTransform: "uppercase",
+          letterSpacing: "0.05em",
+          marginBottom: "8px",
+        }}>
+        Fasilitas Umum
+      </p>
+      {Object.entries(FASUM_COLORS).map(([key, color]) => (
+        <div
+          key={key}
+          style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "5px" }}
+        >
+          <span
+            style={{
+              display: "inline-block",
+              width: "14px",
+              height: "14px",
+              borderRadius: "3px",
+              backgroundColor: color,
+              border: "1px solid #9ca3af",
+              flexShrink: 0,
+            }}
+          />
+          <span style={{ fontSize: "12px", color: "#4b5563" }}>{key}</span>
+        </div>
+      ))}
+      <p style={{ fontSize: "10px", color: "#9ca3af", marginTop: "8px" }}>
+        Klik poligon untuk detail SDA
+      </p>
+    </div>
+  );
+}
+
 export default function AsetLayer() {
     const [selectedAsset, setSelectedAsset] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [geoData, setGeoData] = useState<any>(null);
 
     const targetFiles = [
-    "/data/Fasum4326/pemerintah.geojson",
-    "/data/Fasum4326/tempat%20ibadah.geojson",
-    "/data/Fasum4326/fasilitas%20pendidikan.geojson",
+    "/data/fasum/Pemerintahan.geojson",
+    "/data/fasum/Ibadah.geojson",
+    "/data/fasum/Pendidikan.geojson",
     ]
 
     useEffect(() => {
@@ -96,18 +155,27 @@ return (
         onEachFeature={(feature: Feature, layer: Layer) => {
           layer.on({
             click: () => {
-              setSelectedAsset(feature.properties);
+              // Inject coordinates from geometry for display in modal
+              const coords = (feature.geometry as any)?.coordinates;
+              setSelectedAsset({
+                ...feature.properties,
+                _lat: coords ? coords[1] : undefined,
+                _lng: coords ? coords[0] : undefined,
+              });
               setIsModalOpen(true);
             },
           });
         }}
       />
 
+      {/* legend */}
+      <FasumLegend />
       {isModalOpen && selectedAsset && (
         <InfoModal
           data={selectedAsset}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          activeModule="aset"
         />
       )}
     </>
