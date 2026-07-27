@@ -9,6 +9,8 @@ import Image from "next/image";
 import Icon from "@/components/ui/Icon";
 import { categoryData } from "@/constants/assetsSummary";
 import { ASET_FOTO } from "@/constants/asetFoto";
+import { STATUS_KEPEMILIKAN_ASET } from "@/constants/statusKepemilikanAset";
+import { LUAS_TANAH_ASET } from "@/constants/luasTanahAset";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -37,7 +39,7 @@ function deriveCategory(data: Record<string, unknown>): {
       ...getCategoryVisual("Fasilitas Pemerintahan"),
     };
   }
-  if (source.includes("olahraga")) {
+  if (source.includes("Olahraga")) {
     return {
       kategori: "Olahraga",
       fungsi: "Sarana kegiatan olahraga dan kebugaran masyarakat",
@@ -76,6 +78,12 @@ function formatCoord(val: unknown): string {
   return isNaN(n) ? "—" : n.toFixed(6);
 }
 
+/** Format luas tanah (m²) with thousand separator */
+function formatLuas(val: number | null | undefined): string {
+  if (val === null || val === undefined) return "Tidak Terdata";
+  return `${val.toLocaleString("id-ID")} m²`;
+}
+
 // ── Info Field ────────────────────────────────────────────────────────────────
 function InfoField({ label, value, icon }: { label: string; value: string; icon?: string }) {
   return (
@@ -99,7 +107,13 @@ export default function AsetfasumModal({ data }: { data: Record<string, unknown>
 
   const namaFasilitas = (data.NAMOBJ as string) ?? "Fasilitas Tidak Teridentifikasi";
   const keterangan = (data.REMARK as string) ?? null;
-  const statusKepemilikan = (data.FGSGOV as string) ?? (data.FGSIBD as string) ?? (data.FGGPDK as string) ?? null;
+  const statusKepemilikan =
+    (data.FGSGOV as string) ??
+    (data.FGSIBD as string) ??
+    (data.FGGPDK as string) ??
+    STATUS_KEPEMILIKAN_ASET[namaFasilitas] ??
+    null;
+  const luasTanah = LUAS_TANAH_ASET[namaFasilitas] ?? null;
   const fotoUrl = ASET_FOTO[namaFasilitas];
 
   return (
@@ -149,6 +163,11 @@ export default function AsetfasumModal({ data }: { data: Record<string, unknown>
             label="Status Kepemilikan"
             value={statusKepemilikan ?? "Tidak Terdata"}
             icon="verified_user"
+          />
+          <InfoField
+            label="Luas Tanah"
+            value={formatLuas(luasTanah)}
+            icon="crop_square"
           />
         </div>
 

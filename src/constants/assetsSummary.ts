@@ -1,11 +1,13 @@
 // src/constants/assetsSummary.ts
-// from: Rekapitulasi_aset.csv
+// from: public/data/Database_Aset_Desa_Rejoagung - RINGKASAN.csv
+// CATATAN: kolom % di CSV sumber salah hitung (masih pakai pembagi total lama/22, bukan 44) —
+// nilai `persen` di bawah ini DIHITUNG ULANG manual (jumlah / 44 * 100), bukan disalin mentah dari CSV.
 
 export const assetsSummary = [
     {
     id: "total-aset",
     label: "Total Aset Terdata",
-    value: "22",
+    value: "44",
     unit: "aset",
     icon: "account_balance",
     accentColor: "#1d4ed8",
@@ -15,7 +17,7 @@ export const assetsSummary = [
   {
     id: "total-luas",
     label: "Total Luas Tanah",
-    value: "21,854",
+    value: "44,768",
     unit: "m²",
     icon: "square_foot",
     accentColor: "#059669",
@@ -35,7 +37,7 @@ export const assetsSummary = [
   {
     id: "belum-verifikasi",
     label: "Belum Diverifikasi",
-    value: "8",
+    value: "7",
     unit: "aset",
     icon: "warning",
     accentColor: "#d97706",
@@ -47,18 +49,18 @@ export const assetsSummary = [
 // nama = satu-satunya taxonomy kategori aset, dipakai bareng oleh AssetMetrics.tsx (chart)
 // dan AsetfasumModal.tsx (deriveCategory, lookup icon+accentClass by nama)
 export const categoryData = [
-    { nama: "Fasilitas Pendidikan", jumlah: 11, luas: "5,371", persen: 45.5, color: "#10b981", icon: "school", accentClass: "text-emerald-600 bg-emerald-50 border-emerald-200" },
-  { nama: "Fasilitas Keagamaan", jumlah: 9, luas: "6,291", persen: 40.9, color: "#2563eb", icon: "mosque", accentClass: "text-blue-600 bg-blue-50 border-blue-200" },
-  { nama: "Olahraga", jumlah: 2, luas: "10,192", persen: 9.1, color: "#8b5cf6", icon: "sports_soccer", accentClass: "text-violet-600 bg-violet-50 border-violet-200" },
-  { nama: "Fasilitas Pemerintahan", jumlah: 1, luas: "0", persen: 4.5, color: "#ea580c", icon: "gavel", accentClass: "text-orange-600 bg-orange-50 border-orange-200" },
+    { nama: "Fasilitas Pendidikan", jumlah: 14, luas: "10,118", persen: 31.8, color: "#10b981", icon: "school", accentClass: "text-emerald-600 bg-emerald-50 border-emerald-200" },
+  { nama: "Fasilitas Keagamaan", jumlah: 27, luas: "24,458", persen: 61.4, color: "#2563eb", icon: "mosque", accentClass: "text-blue-600 bg-blue-50 border-blue-200" },
+  { nama: "Olahraga", jumlah: 2, luas: "10,192", persen: 4.5, color: "#8b5cf6", icon: "sports_soccer", accentClass: "text-violet-600 bg-violet-50 border-violet-200" },
+  { nama: "Fasilitas Pemerintahan", jumlah: 1, luas: "0", persen: 2.3, color: "#ea580c", icon: "gavel", accentClass: "text-orange-600 bg-orange-50 border-orange-200" },
   // Fallback bucket — belum ada data GeoJSON terpisah, jumlah/luas/persen placeholder sampai data riil masuk
   { nama: "Fasilitas Umum / Sosial", jumlah: 0, luas: "0", persen: 0, color: "#64748b", icon: "location_city", accentClass: "text-slate-600 bg-slate-50 border-slate-200" },
 ];
 
 export const ownershipData = [
-    { status: "Hak Milik", jumlah: 9, persen: 40.9, color: "#10b981" },
-  { status: "Belum Terverifikasi", jumlah: 5, persen: 22.7, color: "#f59e0b" },
-  { status: "Hak Wakaf", jumlah: 4, persen: 18.2, color: "#3b82f6" },
-  { status: "Kosong / Tanpa Dokumen", jumlah: 3, persen: 13.6, color: "#ef4444" },
-  { status: "Hak Pakai", jumlah: 1, persen: 4.5, color: "#8b5cf6" },
+    { status: "Hak Milik", jumlah: 25, persen: 56.8, color: "#10b981" },
+  { status: "Belum Terverifikasi", jumlah: 6, persen: 13.6, color: "#f59e0b" },
+  { status: "Hak Wakaf", jumlah: 8, persen: 18.2, color: "#3b82f6" },
+  { status: "Kosong / Tanpa Dokumen", jumlah: 4, persen: 9.1, color: "#ef4444" },
+  { status: "Hak Pakai", jumlah: 1, persen: 2.3, color: "#8b5cf6" },
 ];

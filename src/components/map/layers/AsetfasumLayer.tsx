@@ -6,6 +6,7 @@ import type { Feature } from "geojson";
 import type { Layer } from "leaflet";
 import L from "leaflet";
 import InfoModal from "../InfoModal";
+import { OLAHRAGA_ASET } from "@/constants/olahragaAset";
 
 function getMarkerStyle(source: string): L.CircleMarkerOptions {
   if (source.includes("Pemerintahan")) {
@@ -37,6 +38,16 @@ function getMarkerStyle(source: string): L.CircleMarkerOptions {
       fillOpacity: 0.9,
     };
   }
+  if (source.includes("Olahraga")) {
+    return {
+      radius: 8,
+      fillColor: FASUM_COLORS.olahraga,
+      color: "#ffffff",
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.9,
+    };
+  }
   // fallback 
   return { radius: 7, fillColor: "#6b7280", color: "#ffffff", weight: 2, fillOpacity: 0.8 };
 }
@@ -45,6 +56,7 @@ const FASUM_COLORS: Record<string, string> = {
   pemerintah: "#ea580c",   // Orange — Pemerintahan
   "tempat ibadah": "#2563eb",   // Blue — Tempat Ibadah
   pendidikan: "#10b981",   // Emerald Green — Pendidikan
+  olahraga: "#facc15",   // Yellow — Olahraga
 };
 
 function FasumLegend(){
@@ -134,7 +146,19 @@ export default function AsetLayer() {
                     }));
                     mergedFeatures = mergedFeatures.concat(tagged);
                 });
-                setGeoData({ type: "FeatureCollection", features: mergedFeatures });
+                const manualOlahragaFeatures = OLAHRAGA_ASET.map((a) => ({
+                  type: "Feature",
+                  properties: {
+                    NAMOBJ: a.namaFasilitas,
+                    ALAMAT: a.alamat,
+                    _source: "Olahraga",
+                  },
+                  geometry: {
+                    type: "Point",
+                    coordinates: [a.koordinat.lng, a.koordinat.lat],
+                  }
+                }));
+                setGeoData({ type: "FeatureCollection", features: [...mergedFeatures, ...manualOlahragaFeatures] });
             } catch (error) {
                 console.error("Error fetching asset data:", error);
             }

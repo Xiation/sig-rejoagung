@@ -17,14 +17,14 @@ const SEKOLAH_LIST = Object.values(SEKOLAH_DATA);
 const totalLembaga = SEKOLAH_LIST.length;
 const coverageIndex = COVERAGE_INDEX_ESTIMASI;
 
-// Bucket varian jenjang (SD/MI → SD, SMP/MTs → SMP) ke 5 kategori chart
+// Bucket varian jenjang (SD/MI → SD, SMP/MTs → SMP) ke 6 kategori chart
 function bucketJenjang(jenjang: string): string {
   if (jenjang.includes("SD")) return "SD";
   if (jenjang.includes("SMP")) return "SMP";
-  return jenjang; // TK, SMK, Pesantren sudah kanonik
+  return jenjang; // TK, SMK, Pesantren, SLB sudah kanonik
 }
 
-const JENJANG_ORDER = ["TK", "SD", "SMP", "SMK", "Pesantren"];
+const JENJANG_ORDER = ["TK", "SD", "SMP", "SMK", "Pesantren", "SLB"];
 const tierCounts = SEKOLAH_LIST.reduce<Record<string, number>>((acc, s) => {
   const tier = bucketJenjang(s.jenjang);
   acc[tier] = (acc[tier] ?? 0) + 1;
@@ -37,16 +37,16 @@ const tierData = JENJANG_ORDER.map((jenjang) => ({
 }));
 
 const ZONA_ORDER: Array<{ label: string; color: string }> = [
-  { label: "< 5 Menit", color: "#10b981" },
-  { label: "5–10 Menit", color: "#f59e0b" },
-  { label: "> 10 Menit", color: "#ef4444" },
+  { label: "< 10 Menit", color: "#10b981" },
+  { label: "10–30 Menit", color: "#f59e0b" },
+  { label: "30–60 Menit", color: "#ef4444" },
 ];
 const zonaCounts = SEKOLAH_LIST.reduce<Record<string, number>>((acc, s) => {
   acc[s.zonaWaktu] = (acc[s.zonaWaktu] ?? 0) + 1;
   return acc;
 }, {});
 const zonaStats = ZONA_ORDER.map((z) => ({ label: z.label, count: zonaCounts[z.label] ?? 0, color: z.color }));
-const zonaAman = SEKOLAH_LIST.filter((s) => s.zonaWaktu !== "> 10 Menit").length;
+const zonaAman = SEKOLAH_LIST.filter((s) => s.zonaWaktu !== "30–60 Menit").length;
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function EducationMetrics() {
@@ -82,7 +82,7 @@ export default function EducationMetrics() {
         <div className="bg-white px-4 py-3 col-span-1">
           <p className="micro-copy text-[var(--text-muted)]">Zona Aman</p>
           <p className="text-2xl font-extrabold tracking-tight text-emerald-600 font-[var(--font-geist-sans)]">{zonaAman}</p>
-          <p className="micro-copy text-[var(--text-muted)]">sekolah ≤ 10 mnt</p>
+          <p className="micro-copy text-[var(--text-muted)]">sekolah ≤ 30 mnt</p>
         </div>
       </div>
 
@@ -120,12 +120,14 @@ export default function EducationMetrics() {
 
         {/* Right: Zona Waktu Tempuh */}
         <div className="p-4 flex flex-col gap-2">
-          <p className="label-caps text-[var(--text-muted)] mb-1">Waktu Tempuh</p>
+          <p className="label-caps text-[var(--text-muted)]">Waktu Tempuh</p>
+          <p className="micro-copy text-[var(--text-muted)] mb-1">Representasi Service Area (Network Analysis) akses ke sekolah terdekat</p>
           {/* Zona summary */}
           <div className="space-y-2">
             {zonaStats.map((z) => (
               <div key={z.label} className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full shrink-0" style={{ background: z.color }} />
+                <span className="micro-copy text-[var(--text-muted)] shrink-0 w-20">{z.label}</span>
                 <div className="flex-1 bg-[var(--surface-container-low)] rounded-full h-1.5">
                   <div
                     className="h-1.5 rounded-full transition-all duration-700"
@@ -152,7 +154,7 @@ export default function EducationMetrics() {
               />
             </div>
             <p className="micro-copy text-[var(--text-muted)] mt-1">
-              {coverageIndex}% pemukiman dalam zona &lt; 10 menit
+              {coverageIndex}% pemukiman dalam zona &lt; 30 menit
             </p>
           </div>
         </div>
