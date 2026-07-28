@@ -7,49 +7,78 @@ import type { Layer } from "leaflet";
 import L from "leaflet";
 import InfoModal from "../InfoModal";
 import { OLAHRAGA_ASET } from "@/constants/olahragaAset";
+import { categoryData } from "@/constants/assetsSummary";
 
-function getMarkerStyle(source: string): L.CircleMarkerOptions {
-  if (source.includes("Pemerintahan")) {
-    return {
-      radius: 10,
-      fillColor: FASUM_COLORS.pemerintah,
-      color: "#ffffff",
-      weight: 2,
-      opacity: 1,
-      fillOpacity: 0.9,
-    };
-  } if (source.includes("Ibadah")) {
-    return {
-      radius: 8,
-      fillColor: FASUM_COLORS["tempat ibadah"],
-      color: "#ffffff",
-      weight: 2,
-      opacity: 1,
-      fillOpacity: 0.9,
-    };
-  }
-  if (source.includes("Pendidikan")) {
-    return {
-      radius: 8,
-      fillColor: FASUM_COLORS.pendidikan,
-      color: "#ffffff",
-      weight: 2,
-      opacity: 1,
-      fillOpacity: 0.9,
-    };
-  }
-  if (source.includes("Olahraga")) {
-    return {
-      radius: 8,
-      fillColor: FASUM_COLORS.olahraga,
-      color: "#ffffff",
-      weight: 2,
-      opacity: 1,
-      fillOpacity: 0.9,
-    };
-  }
-  // fallback 
-  return { radius: 7, fillColor: "#6b7280", color: "#ffffff", weight: 2, fillOpacity: 0.8 };
+// function getMarkerStyle(source: string): L.CircleMarkerOptions {
+//   if (source.includes("Pemerintahan")) {
+//     return {
+//       radius: 10,
+//       fillColor: FASUM_COLORS.pemerintah,
+//       color: "#ffffff",
+//       weight: 2,
+//       opacity: 1,
+//       fillOpacity: 0.9,
+//     };
+//   } if (source.includes("Ibadah")) {
+//     return {
+//       radius: 8,
+//       fillColor: FASUM_COLORS["tempat ibadah"],
+//       color: "#ffffff",
+//       weight: 2,
+//       opacity: 1,
+//       fillOpacity: 0.9,
+//     };
+//   }
+//   if (source.includes("Pendidikan")) {
+//     return {
+//       radius: 8,
+//       fillColor: FASUM_COLORS.pendidikan,
+//       color: "#ffffff",
+//       weight: 2,
+//       opacity: 1,
+//       fillOpacity: 0.9,
+//     };
+//   }
+//   if (source.includes("Olahraga")) {
+//     return {
+//       radius: 8,
+//       fillColor: FASUM_COLORS.olahraga,
+//       color: "#ffffff",
+//       weight: 2,
+//       opacity: 1,
+//       fillOpacity: 0.9,
+//     };
+//   }
+//   // fallback 
+//   return { radius: 7, fillColor: "#6b7280", color: "#ffffff", weight: 2, fillOpacity: 0.8 };
+// }
+function getCategoryIcon(source: string): string {
+  if (source.includes("Pemerintahan")) return categoryData.find((c) => c.nama === "Fasilitas Pemerintahan")!.icon;
+  if (source.includes("Ibadah")) return categoryData.find((c) => c.nama === "Fasilitas Keagamaan")!.icon;
+  if (source.includes("Pendidikan")) return categoryData.find((c) => c.nama === "Fasilitas Pendidikan")!.icon;
+  if (source.includes("Olahraga")) return categoryData.find((c) => c.nama === "Olahraga")!.icon;
+  return categoryData.find((c) => c.nama === "Fasilitas Umum / Sosial")!.icon;
+}
+
+function getMarkerColor(source: string): string {
+  if (source.includes("Pemerintahan")) return FASUM_COLORS.pemerintah;
+  if (source.includes("Ibadah")) return FASUM_COLORS["tempat ibadah"];
+  if (source.includes("Pendidikan")) return FASUM_COLORS.pendidikan;
+  if (source.includes("Olahraga")) return FASUM_COLORS.olahraga;
+  return "#6b7280"; // fallback, sama kayak default lama
+}
+
+function getMarkerIcon(source: string): L.DivIcon {
+  const color = getMarkerColor(source);
+  const iconName = getCategoryIcon(source);
+  return L.divIcon({
+    className: "", // kosongin — biar gak kena default style .leaflet-div-icon (bg putih + border bawaan Leaflet)
+    html: `<div style="background:${color};width:28px;height:28px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.3);">
+             <span class="material-symbols-outlined" style="font-size:16px;color:#fff;line-height:1;">${iconName}</span>
+           </div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
 }
 
 const FASUM_COLORS: Record<string, string> = {
@@ -121,6 +150,7 @@ export default function AsetLayer() {
     "/data/fasum/Pemerintahan.geojson",
     "/data/fasum/Ibadah.geojson",
     "/data/fasum/Pendidikan.geojson",
+    // placeholder for olahraga
     ]
 
     useEffect(() => {
@@ -173,8 +203,8 @@ return (
         key="aset-layer"
         data={geoData}
         pointToLayer={(feature, latlng) => {
-          const style = getMarkerStyle(feature.properties?._source ?? "");
-          return L.circleMarker(latlng, style);
+          const icon = getMarkerIcon(feature.properties?._source ?? "");
+          return L.marker(latlng, { icon });
         }}
         onEachFeature={(feature: Feature, layer: Layer) => {
           layer.on({

@@ -23,8 +23,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "B",
     npsn: "69889031",
     alamat: "Sumberagung, Rejoagung, Srono, Banyuwangi Regency, East Java 68471",
-    zonaWaktu: "< 10 Menit",
-    zonaColor: "#10b981",
+    zonaWaktu: "10–30 Menit",
+    zonaColor: "#f59e0b",
   },
   "Pondok Pesantren Salaf Darussalam": {
     jenjang: "Pesantren",
@@ -32,8 +32,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "—",
     npsn: "—",
     alamat: "Sumberagung, Rejoagung, Srono, Banyuwangi Regency, East Java 68471",
-    zonaWaktu: "< 10 Menit",
-    zonaColor: "#10b981",
+    zonaWaktu: "10–30 Menit",
+    zonaColor: "#f59e0b",
   },
   // Rename dari "SMP Al Amiriyyah" — samain persis ke NAMOBJ GeoJSON
   "SMP AL-Amiriyyah": {
@@ -42,8 +42,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "A",
     npsn: "70012285",
     alamat: "Sumberagung, Rejoagung, Srono, Banyuwangi Regency, East Java 68471",
-    zonaWaktu: "< 10 Menit",
-    zonaColor: "#10b981",
+    zonaWaktu: "10–30 Menit",
+    zonaColor: "#f59e0b",
   },
   "Pondok Pesantren Darussalam": {
     jenjang: "Pesantren",
@@ -71,8 +71,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "B",
     npsn: "20526390",
     alamat: "Sumberagung, Rejoagung, Kec. Srono, Kabupaten Banyuwangi, Jawa Timur 68471",
-    zonaWaktu: "10–30 Menit",
-    zonaColor: "#f59e0b",
+    zonaWaktu: "< 10 Menit",
+    zonaColor: "#10b981",
   },
   "TK Khadijah 203 Rejoagung": {
     jenjang: "TK",
@@ -80,8 +80,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "B",
     npsn: "20569565",
     alamat: "Sumberagung, Rejoagung, Kec. Srono, Kabupaten Banyuwangi, Jawa Timur 68471",
-    zonaWaktu: "10–30 Menit",
-    zonaColor: "#f59e0b",
+    zonaWaktu: "< 10 Menit",
+    zonaColor: "#10b981",
   },
   // Rename dari "Ponpes manbaul alam" — GeoJSON pakai nama resmi lengkap
   // CATATAN: alamat CSV nunjuk ke Kec. Muncar (bukan Kec. Srono kayak sekolah lain) — dicek apa adanya dari sumber, gak diubah sepihak
@@ -91,8 +91,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "—",
     npsn: " 20584049",
     alamat: "Jln. KH. Askandar No.01 Berasan, Wringinputih, Dusun Krajan, Wringin Putih, Kec. Muncar, Kabupaten Banyuwangi, Jawa Timur 68472",
-    zonaWaktu: "10–30 Menit",
-    zonaColor: "#f59e0b",
+    zonaWaktu: "< 10 Menit",
+    zonaColor: "#10b981",
   },
   "MTs Unggulan Darussalam": {
     jenjang: "SMP/MTs",
@@ -110,8 +110,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "—",
     npsn: "—",
     alamat: "J862+874, Krajan, Bagorejo, Kec. Srono, Kabupaten Banyuwangi, Jawa Timur 68471",
-    zonaWaktu: "10–30 Menit",
-    zonaColor: "#f59e0b",
+    zonaWaktu: "< 10 Menit",
+    zonaColor: "#10b981",
   },
   // Rename dari "MI Al Ma'arif Rejoagung"
   "MI Al-Ma'arif": {
@@ -120,8 +120,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "B",
     npsn: "60716102",
     alamat: "Jl. K. Sidik Sumberagung, RT.01/RW.02, Krajan, Rejoagung, Kec. Srono, Kabupaten Banyuwangi, Jawa Timur 68471",
-    zonaWaktu: "30–60 Menit",
-    zonaColor: "#ef4444",
+    zonaWaktu: "< 10 Menit",
+    zonaColor: "#10b981",
   },
   // Rename dari "Pondok Pesantren Al Falah Rejoagung"
   "Pondok Pesantren Al-Falah": {
@@ -130,8 +130,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "—",
     npsn: "—",
     alamat: "Jl. K. Sidik, Sumberagung, Rejoagung, Kec. Srono, Kabupaten Banyuwangi, Jawa Timur 68471",
-    zonaWaktu: "30–60 Menit",
-    zonaColor: "#ef4444",
+    zonaWaktu: "10–30 Menit",
+    zonaColor: "#f59e0b",
   },
   // BARU — placeholder NPSN/akreditasi, belum ada data real. Alamat dari ASET PENDIDIKAN.csv (key tetep "Khodjiah" nyamain typo di GeoJSON NAMOBJ, CSV-nya sendiri nulis "Khodijah")
   "TK Khodjiah 88": {
@@ -140,8 +140,8 @@ export const SEKOLAH_DATA: Record<string, SekolahDetail> = {
     akreditasi: "—",
     npsn: "—",
     alamat: "J853+G8V, Krajan, Bagorejo, Kec. Srono, Kabupaten Banyuwangi, Jawa Timur 68471",
-    zonaWaktu: "10–30 Menit",
-    zonaColor: "#f59e0b",
+    zonaWaktu: "< 10 Menit",
+    zonaColor: "#10b981",
   },
   // BARU — jenjang SLB (Sekolah Luar Biasa), tier baru, placeholder NPSN/akreditasi
   // CATATAN: alamat CSV nunjuk "Kabupaten Jombang" — kemungkinan besar typo sumber (Jombang gak nempel sama Banyuwangi), dicek apa adanya, gak diubah sepihak
