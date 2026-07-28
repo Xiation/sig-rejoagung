@@ -62,17 +62,6 @@ export default function InfoModal({ isOpen, onClose, data, activeModule }: InfoM
             {meta.label}
           </div>
 
-          {/* Spacer */}
-          <div className="flex-1" />
-
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--secondary)] hover:bg-[var(--surface-container)] transition-colors"
-            aria-label="Tutup modal"
-          >
-            <Icon name="close" size={20} />
-          </button>
         </div>
 
         {/* ── Modal Body (scrollable) ───────────────────────────────────────── */}
