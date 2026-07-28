@@ -11,6 +11,7 @@ interface TopAppBarProps {
   title: string;
   badge?: string;
   badgeVariant?: "primary" | "map" | "default";
+  sidebarOpen?: boolean;
   onMenuClick?: () => void;
 }
 
@@ -25,16 +26,16 @@ const ICON_MAP: Record<string, string> = {
   "Peta Interaktif": "map",
 };
 
-export default function TopAppBar({ title, badge, badgeVariant = "default", onMenuClick }: TopAppBarProps) {
+export default function TopAppBar({ title, badge, badgeVariant = "default", sidebarOpen = false, onMenuClick }: TopAppBarProps) {
   const iconName = badge ? (ICON_MAP[badge] ?? "info") : "info";
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-72 z-40 h-16 bg-white/90 backdrop-blur-md border-b border-[var(--outline-variant)] shadow-sm flex items-center px-4 lg:px-6 gap-3 lg:gap-4">
-      {/* Hamburger — mobile/tablet only */}
+    <header className={`fixed top-0 right-0 left-0 z-40 h-16 bg-white/90 backdrop-blur-md border-b border-[var(--outline-variant)] shadow-sm flex items-center px-4 lg:px-6 gap-3 lg:gap-4 transition-[left] duration-200 ${sidebarOpen ? "lg:left-72" : "lg:left-0"}`}>
+      {/* Hamburger — sekarang muncul di semua ukuran layar, toggle sidebar termasuk di desktop */}
       <button
         onClick={onMenuClick}
-        className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center text-[var(--secondary)] hover:bg-[var(--surface-container)] transition-colors shrink-0"
-        aria-label="Buka menu navigasi"
+        className="w-9 h-9 rounded-lg flex items-center justify-center text-[var(--secondary)] hover:bg-[var(--surface-container)] transition-colors shrink-0"
+        aria-label="Buka/tutup menu navigasi"
       >
         <Icon name="menu" size={22} />
       </button>

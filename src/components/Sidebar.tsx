@@ -60,7 +60,7 @@ export default function Sidebar({ activeModule, setActiveModule, isOpen, onClose
 
       <aside
         className={cn(
-          "fixed left-0 top-0 h-full w-72 bg-white border-r border-[var(--outline-variant)] flex flex-col z-50 shadow-sm transition-transform duration-200 lg:translate-x-0",
+          "fixed left-0 top-0 h-full w-72 bg-white border-r border-[var(--outline-variant)] flex flex-col z-50 shadow-sm transition-transform duration-200",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
         style={{ width: "18rem" }}
@@ -80,14 +80,6 @@ export default function Sidebar({ activeModule, setActiveModule, isOpen, onClose
               GIS Platform 2026
             </p>
           </div>
-          {/* Close button — mobile drawer only */}
-          <button
-            onClick={onClose}
-            className="lg:hidden w-8 h-8 rounded-lg flex items-center justify-center text-[var(--secondary)] hover:bg-[var(--surface-container)] transition-colors shrink-0"
-            aria-label="Tutup menu"
-          >
-            <Icon name="close" size={20} />
-          </button>
         </div>
       </div>
 

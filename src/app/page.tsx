@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import TopAppBar from "@/components/layout/TopAppBar";
 import dynamic from "next/dynamic";
@@ -49,6 +49,12 @@ export default function DashboardGIS() {
   const meta = MODULE_META[activeModule] ?? MODULE_META["aset"];
   const isMapView = activeModule !== "dashboard";
 
+  // Sidebar sekarang collapsible di desktop juga (bukan permanen kayak dulu) —
+  // default kebuka di desktop (lg: >= 1024px) biar behavior awal sama kayak sebelumnya, tetep ketutup di mobile.
+  useEffect(() => {
+    if (window.innerWidth >= 1024) setSidebarOpen(true);
+  }, []);
+
   return (
     // Root shell: full-screen, row layout
     <div className="flex h-screen w-screen overflow-hidden bg-[var(--surface-container-low)]">
@@ -61,15 +67,16 @@ export default function DashboardGIS() {
         onClose={() => setSidebarOpen(false)}
       />
 
-      {/* ── Main Viewport — offset by sidebar cuma di desktop (lg:) ── */}
-      <div className="flex flex-col flex-1 h-full ml-0 lg:ml-72">
+      {/* ── Main Viewport — offset by sidebar cuma di desktop (lg:) kalau sidebar lagi kebuka ── */}
+      <div className={`flex flex-col flex-1 h-full ml-0 transition-[margin] duration-200 ${sidebarOpen ? "lg:ml-72" : "lg:ml-0"}`}>
 
         {/* ── Fixed TopAppBar (64px) ── */}
         <TopAppBar
           title={meta.title}
           badge={meta.badge}
           badgeVariant={meta.badgeVariant}
-          onMenuClick={() => setSidebarOpen(true)}
+          sidebarOpen={sidebarOpen}
+          onMenuClick={() => setSidebarOpen((prev) => !prev)}
         />
 
         {/* ── Scrollable / Fluid Content Area ── */}
