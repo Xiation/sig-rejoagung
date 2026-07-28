@@ -178,27 +178,25 @@ export const JENJANG_COLORS: Record<string, string> = {
   SLB: "#06b6d4",
 };
 
-// Placeholder/estimasi — belum ada hasil kalkulasi Network Analysis riil, lihat label UI "* estimasi"
+// Coverage Index — dihitung ulang pakai angka luas ring Service Area terbaru dari temen geodesi.
 //
-// RUMUS YANG PERNAH DICOBA (belum diterapkan ke angka di bawah, masih didiskusikan ke temen geodesi):
-//   Coverage Index (%) = (luas ring Service Area / luas Rejoagung) × 100
+// RUMUS: Coverage Index (%) = (luas ring Service Area / luas Rejoagung) × 100
 //
-// Data yang dipakai pas nyoba hitung:
-//   - Ring 10 menit (public/data/akses/Service_Area_10_Menit.geojson) → area: 47.424,10 m²
-//   - Ring 30 menit (public/data/akses/Service_Area_30_Menit.geojson) → area: 876.029,93 m² (kumulatif, udah termasuk ring 10 menit)
-//   - Band 10–30 menit eksklusif = 876.029,93 − 47.424,10 = 828.605,83 m²
-//   - Luas Rejoagung = 140.668.610,04 m² (revisi dari temen, sumber: data geodesi)
+// Data (revisi terbaru):
+//   - Ring 10 menit (kumulatif) = 584.532,125 m²
+//   - Ring 30 menit (kumulatif, udah termasuk ring 10 menit) = 3.005.024,902 m²
+//   - Ring 60 menit (kumulatif, udah termasuk ring 30 & 10 menit) = 5.690.995,069 m²
+//   - Luas Rejoagung = 7.138.317,647 m²
+//     (CATATAN: beda dari angka 140.668.610,04 m² yang sempat dipakai sesi sebelumnya — angka baru ini
+//     kebetulan cocok sama field "luas" mentah di Batas Administrasi.geojson, ~7,14 km², lebih masuk akal
+//     buat luas 1 desa. Anggap ini angka final dari temen geodesi kecuali dikoreksi lagi.)
 //
-// Hasil percobaan:
-//   - Band 10–30 menit ÷ luas Rejoagung   = 828.605,83 / 140.668.610,04 = 0,589%
-//   - Ring 30 menit (kumulatif) ÷ luas Rejoagung = 876.029,93 / 140.668.610,04 = 0,623%
+// Hasil:
+//   - Ring 10 menit ÷ luas Rejoagung = 584.532,125 / 7.138.317,647 = 8,19%
+//   - Ring 30 menit ÷ luas Rejoagung = 3.005.024,902 / 7.138.317,647 = 42,10%  ← dipakai di bawah (UI label "< 30 menit")
+//   - Ring 60 menit ÷ luas Rejoagung = 5.690.995,069 / 7.138.317,647 = 79,72%
 //
-// CATATAN PENTING — kenapa hasil di atas BELUM dipakai ganti angka di bawah:
-//   1. Ring Service Area yang ada cuma dari 1 dari 14 sekolah (SMK NU Darussalam) — 13 sekolah lain
-//      belum punya isochrone, jadi hasil di atas pasti undercount parah, bukan cakupan desa beneran.
-//   2. Pembagi "luas Rejoagung" itu luas administratif desa penuh (sawah/hutan/lahan kosong ikut
-//      kehitung), bukan luas pemukiman padat penduduk — rasio jadi keliatan kecil banget (<1%),
-//      berpotensi lebih menyesatkan daripada angka 68.4 di bawah (yang minimal jujur dilabel "estimasi").
-//   3. Perlu masukan temen geodesi soal: (a) pembagi yang lebih tepat (luas pemukiman, bukan luas desa
-//      penuh), (b) isochrone lengkap buat 14 sekolah biar gak cuma sample 1 titik.
-export const COVERAGE_INDEX_ESTIMASI = 68.4;
+// BELUM DIKONFIRMASI: apakah 3 angka ring di atas udah hasil gabungan (union) isochrone 14 sekolah, atau
+// masih sample dari sebagian sekolah kayak revisi sebelumnya (yang cuma dari 1/14 sekolah). Kalau ternyata
+// masih sample sebagian, angka di bawah masih undercount — perlu dicek ulang ke temen geodesi.
+export const COVERAGE_INDEX_ESTIMASI = 42.1;
