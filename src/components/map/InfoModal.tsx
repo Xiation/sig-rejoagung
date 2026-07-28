@@ -10,12 +10,13 @@ import Icon from "@/components/ui/Icon";
 import AsetfasumModal from "./content/AsetfasumModal";
 import SekolahModal from "./content/SekolahModal";
 import PotensiModal from "./content/PotensiModal";
+import SungaiModal from "./content/SungaiModal";
 
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   data: Record<string, unknown>;
-  activeModule: "aset" | "sekolah" | "potensi";
+  activeModule: "aset" | "sekolah" | "potensi" | "sungai";
 }
 
 // Map module → label & icon untuk modal header chip
@@ -34,6 +35,11 @@ const MODULE_META: Record<string, { label: string; icon: string; chipClass: stri
     label: "Potensi Lahan & SDA",
     icon: "agriculture",
     chipClass: "bg-amber-50 text-amber-700 border-amber-200",
+  },
+  sungai: {
+    label: "Sungai & Irigasi",
+    icon: "water",
+    chipClass: "bg-sky-50 text-sky-700 border-sky-200",
   },
 };
 
@@ -69,6 +75,7 @@ export default function InfoModal({ isOpen, onClose, data, activeModule }: InfoM
           {activeModule === "aset" && <AsetfasumModal data={data} />}
           {activeModule === "sekolah" && <SekolahModal data={data} />}
           {activeModule === "potensi" && <PotensiModal data={data} />}
+          {activeModule === "sungai" && <SungaiModal data={data} />}
         </div>
 
         {/* ── Modal Footer ─────────────────────────────────────────────────── */}

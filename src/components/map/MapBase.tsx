@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, CircleMarker, Polygon, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON, CircleMarker, Polygon, useMap, ZoomControl } from "react-leaflet";
 import InfoModal from "./InfoModal";
 import type { Feature } from "geojson";
 import type { Layer } from "leaflet";
@@ -10,6 +10,7 @@ import L from "leaflet";
 import AsetLayer from "./layers/AsetfasumLayer";
 import SekolahLayer from "./layers/SekolahLayer";
 import PotensiLayer from "./layers/PotensiLayer";
+import SungaiLayer from "./layers/SungaiLayer";
 
 interface MapBaseProps {
   activeModule: string;
@@ -66,26 +67,64 @@ const BASEMAPS: Record<BasemapKey, { label: string; icon: string; url: string; a
     },
 };
 
-function BasemapToggle({ value, onChange }: { value: BasemapKey; onChange: (b: BasemapKey) => void }) {
+function OverlayButton({
+  active, onClick, icon, label,
+}: { active: boolean; onClick: () => void; icon: string; label: string }) {
   return (
-    <div style={{ position: "absolute", top: 24, left: 54, zIndex: 1000, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)", borderRadius: 12, padding: 4, boxShadow: "0 4px 16px rgba(0,0,0,0.12)", display: "flex", gap: 2 }}>
-      {(Object.keys(BASEMAPS) as BasemapKey[]).map((key) => (
-        <button
-          key={key}
-          onClick={() => onChange(key)}
-          style={{
-            display: "flex", alignItems: "center", gap: 4,
-            padding: "6px 10px", borderRadius: 8, border: "none", cursor: "pointer",
-            background: value === key ? "#2563eb" : "transparent",
-            color: value === key ? "#ffffff" : "#374151",
-            fontSize: 12, fontWeight: 600,
-            fontFamily: "var(--font-geist-sans)", 
-          }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{BASEMAPS[key].icon}</span>
-          {BASEMAPS[key].label}
-        </button>
-      ))}
+    <button
+      onClick={onClick}
+      style={{
+        display: "flex", alignItems: "center", gap: 4,
+        padding: "6px 10px", borderRadius: 8, border: "none", cursor: "pointer",
+        background: active ? "#2563eb" : "transparent",
+        color: active ? "#ffffff" : "#374151",
+        fontSize: 12, fontWeight: 600,
+        fontFamily: "var(--font-geist-sans)",
+        whiteSpace: "nowrap",
+      }}
+    >
+      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{icon}</span>
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
+
+// Semua toggle map (basemap + overlay) digabung 1 container flex-wrap — sejajar di layar lebar,
+// otomatis turun baris di layar sempit biar gak overflow horizontal (responsivity).
+function MapControls({
+  basemap, onBasemapChange, showJalan, onToggleJalan, showSungai, onToggleSungai,
+}: {
+  basemap: BasemapKey; onBasemapChange: (b: BasemapKey) => void;
+  showJalan: boolean; onToggleJalan: () => void;
+  showSungai: boolean; onToggleSungai: () => void;
+}) {
+  return (
+    <div
+      style={{
+        position: "absolute", top: 16, left: 16, right: 16, zIndex: 1000,
+        display: "flex", flexWrap: "wrap", gap: 8,
+      }}
+    >
+      {/* Basemap — pilihan eksklusif, dikelompokkan 1 pill */}
+      <div style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)", borderRadius: 12, padding: 4, boxShadow: "0 4px 16px rgba(0,0,0,0.12)", display: "flex", gap: 2 }}>
+        {(Object.keys(BASEMAPS) as BasemapKey[]).map((key) => (
+          <OverlayButton
+            key={key}
+            active={basemap === key}
+            onClick={() => onBasemapChange(key)}
+            icon={BASEMAPS[key].icon}
+            label={BASEMAPS[key].label}
+          />
+        ))}
+      </div>
+
+      {/* Overlay — toggle independen, masing-masing pill sendiri */}
+      <div style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)", borderRadius: 12, padding: 4, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}>
+        <OverlayButton active={showJalan} onClick={onToggleJalan} icon="route" label="Jaringan Jalan" />
+      </div>
+      <div style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)", borderRadius: 12, padding: 4, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}>
+        <OverlayButton active={showSungai} onClick={onToggleSungai} icon="water" label="Sungai & Irigasi" />
+      </div>
     </div>
   );
 }
@@ -96,6 +135,11 @@ export default function MapBase({ activeModule }: MapBaseProps){
   // State untuk menyimpan data batas wilayah
   const [boundaryData, setBoundaryData] = useState<any>(null);
   const [basemap, setBasemap] = useState<BasemapKey>("satelit");
+  // Overlay Jaringan Jalan — toggle independen dari activeModule, mati by default
+  const [jalanData, setJalanData] = useState<any>(null);
+  const [showJalan, setShowJalan] = useState(false);
+  // Overlay Sungai & Irigasi — toggle juga, tapi tetap interactive (klik → modal)
+  const [showSungai, setShowSungai] = useState(false);
 
   useEffect(() => {
     const fetchBoundData = async () => {
@@ -110,18 +154,41 @@ export default function MapBase({ activeModule }: MapBaseProps){
       }
     };
     fetchBoundData();
+
+    const fetchJalanData = async () => {
+      try {
+        const res = await fetch("/data/fasum/Jaringan Jalan.geojson");
+        if (res.ok) {
+          const data = await res.json();
+          setJalanData(data);
+        }
+      } catch (error) {
+        console.error("Error fetching jaringan jalan data:", error);
+      }
+    };
+    fetchJalanData();
   }, []);
 
   return (
-    <div className="h-[100vh] w-full z-0 relative">
-      <BasemapToggle value={basemap} onChange={setBasemap} />
+    <div className="h-full w-full z-0 relative">
+      <MapControls
+        basemap={basemap}
+        onBasemapChange={setBasemap}
+        showJalan={showJalan}
+        onToggleJalan={() => setShowJalan((prev) => !prev)}
+        showSungai={showSungai}
+        onToggleSungai={() => setShowSungai((prev) => !prev)}
+      />
       <MapContainer
         center={centerPosition}
         zoom={15}
         scrollWheelZoom={true}
         className="h-full w-full"
         minZoom={10}
+        zoomControl={false}
       >
+        {/* Zoom control (+/-) dipindah ke bottom-left — top-left sekarang dipake MapControls */}
+        <ZoomControl position="bottomleft" />
         <TileLayer
           key={basemap}
           attribution={BASEMAPS[basemap].attribution}
@@ -156,6 +223,18 @@ export default function MapBase({ activeModule }: MapBaseProps){
             interactive={false}
           />
         )}
+
+        {/* Overlay Jaringan Jalan — toggle, independen dari activeModule */}
+        {showJalan && jalanData && (
+          <GeoJSON
+            data={jalanData}
+            style={{ color: "#f97316", weight: 2, opacity: 0.9 }}
+            interactive={false}
+          />
+        )}
+
+        {/* Overlay Sungai & Irigasi — toggle, independen dari activeModule, tetap interactive (klik → modal) */}
+        {showSungai && <SungaiLayer />}
 
         {/* ================================== */}
         {/* Layer Injection Berdasarkan Modul  */}
