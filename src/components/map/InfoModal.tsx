@@ -62,9 +62,14 @@ export default function InfoModal({ isOpen, onClose, data, activeModule }: InfoM
 
   return (
     // ── Backdrop Overlay ────────────────────────────────────────────────────
+    // Modal ini dirender sebagai child React di dalam <MapContainer> (lewat AsetLayer/SungaiLayer/dst),
+    // jadi walau posisinya "fixed" (visually di atas peta), dia tetep descendant DOM dari container
+    // Leaflet — wheel/touch event bisa bubbling ke listener zoom/pan Leaflet kalau gak distop di sini.
     <div
       className="fixed top-16 inset-x-0 bottom-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
     >
       {/* ── Modal Shell (max-w-2xl per DESIGN_SYS.md) ─────────────────────── */}
       {/* max-h dihitung persis dari sisa ruang backdrop (100vh - 4rem TopAppBar - 2rem padding atas/bawah) — modal gak akan pernah nabrak TopAppBar */}

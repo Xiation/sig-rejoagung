@@ -314,7 +314,10 @@
   }
 }
 
-/* Zoom control digeser naik dikit dari bottom edge — MapBase.tsx pakai position="bottomleft" */
+/* Zoom control digeser naik dikit dari bottom edge — MapBase.tsx pakai position="bottomleft".
+   Pakai env(safe-area-inset-*) biar gak "tenggelam"/ketutup notch atau home-indicator pas HP
+   landscape (safe-area-inset-left jadi signifikan di landscape, beda dari portrait). */
 .leaflet-bottom.leaflet-left {
-  margin-bottom: 24px;
+  margin-bottom: calc(24px + env(safe-area-inset-bottom));
+  margin-left: calc(8px + env(safe-area-inset-left));
 }

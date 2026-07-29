@@ -13,17 +13,11 @@ import InfoModal from "../InfoModal";
 import { lstDeltaColor, LST_MIN, LST_MAX } from "@/lib/rasterColors";
 import { getPixelValueAtLatLng } from "@/lib/rasterQuery";
 import { ensureRasterPane, RASTER_PANE_NAME, setActiveRasterLayer, removeIfActiveRasterLayer } from "@/lib/rasterPane";
+import MapLegendPanel from "../MapLegendPanel";
 
 function LstLegend() {
   return (
-    <div
-      style={{
-        position: "absolute", top: 16, right: 16, zIndex: 1000,
-        background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)",
-        borderRadius: 12, padding: "12px 16px", boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-        minWidth: 180,
-      }}
-    >
+    <MapLegendPanel>
       <p style={{ fontSize: 11, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
         Delta LST 2020–2025
       </p>
@@ -34,7 +28,7 @@ function LstLegend() {
         <span>+{LST_MAX}°C</span>
       </div>
       <p style={{ fontSize: 10, color: "#9ca3af", marginTop: 8 }}>Klik peta untuk lihat nilai titik</p>
-    </div>
+    </MapLegendPanel>
   );
 }
 

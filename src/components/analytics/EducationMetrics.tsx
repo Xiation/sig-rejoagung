@@ -62,7 +62,7 @@ export default function EducationMetrics() {
           <p className="section-header text-[var(--on-surface)] truncate">Aksesibilitas Pendidikan</p>
         </div>
         <span className="shrink-0 label-caps px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
-          {totalLembaga} lembaga
+          {totalLembaga}<span className="hidden sm:inline"> lembaga</span>
         </span>
       </div>
 
@@ -87,7 +87,9 @@ export default function EducationMetrics() {
       </div>
 
       {/* ── Chart + Coverage Bar ──────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 divide-x divide-[var(--outline-variant)]/40 flex-1">
+      {/* grid-cols-1 di mobile — 2 kolom (chart|waktu tempuh) kepepet banget di layar sempit,
+          label zona ("10–30 Menit") + "X sekolah" kepotong/bocor kalau dipaksa 2 kolom */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-[var(--outline-variant)]/40 flex-1">
 
         {/* Left: Bar Chart — Distribusi Jenjang */}
         <div className="p-4 flex flex-col">

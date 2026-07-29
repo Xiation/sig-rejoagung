@@ -8,6 +8,7 @@ import L from "leaflet";
 import InfoModal from "../InfoModal";
 import { OLAHRAGA_ASET } from "@/constants/olahragaAset";
 import { categoryData } from "@/constants/assetsSummary";
+import MapLegendPanel from "../MapLegendPanel";
 
 // function getMarkerStyle(source: string): L.CircleMarkerOptions {
 //   if (source.includes("Pemerintahan")) {
@@ -90,20 +91,7 @@ const FASUM_COLORS: Record<string, string> = {
 
 function FasumLegend(){
   return (
-    <div style={{
-      position: "absolute",
-      top: "16px",
-        right: "16px",
-        zIndex: 1000,
-        background: "rgba(255,255,255,0.95)",
-        backdropFilter: "blur(8px)",
-        borderRadius: "12px",
-        padding: "12px 16px",
-        boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-        pointerEvents: "none",
-        minWidth: "180px",
-    }}
-    >
+    <MapLegendPanel>
       <p
       style={{
           fontSize: "11px",
@@ -137,7 +125,7 @@ function FasumLegend(){
       <p style={{ fontSize: "10px", color: "#9ca3af", marginTop: "8px" }}>
         Klik poligon untuk detail SDA
       </p>
-    </div>
+    </MapLegendPanel>
   );
 }
 

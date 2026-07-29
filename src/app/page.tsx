@@ -67,7 +67,10 @@ export default function DashboardGIS() {
 
   return (
     // Root shell: full-screen, row layout
-    <div className="flex h-screen w-screen overflow-hidden bg-[var(--surface-container-low)]">
+    // h-dvh (bukan h-screen/100vh) — di mobile, address bar yang muncul/ilang bikin 100vh gak akurat,
+    // nyebabin overlay (toggle/legend/zoom control) keliatan nabrak header pas toolbar berubah,
+    // terutama landscape yang tinggi viewport-nya udah mepet
+    <div className="flex h-dvh w-screen overflow-hidden bg-[var(--surface-container-low)]">
 
       {/* ── Sidebar — fixed 288px di desktop (lg:), slide-in drawer di mobile/tablet ── */}
       <Sidebar

@@ -112,12 +112,14 @@ const totalTonaseKategori = produksiKategori.reduce((sum, item) => sum + item.ju
 
       {/* ── Produksi Pertanian & Perkebunan ──────────────────────────────── */}
       <div className="border-t border-[var(--outline-variant)]/60 p-5">
-        <div className="flex items-center gap-2 mb-1">
-          <Icon name="grass" size={16} className="text-[var(--primary)]" />
-          <p className="label-caps text-[var(--text-muted)]">
-            Produksi Pertanian & Perkebunan (Ton/Tahun)
-          </p>
-          <span className="ml-auto label-caps px-2.5 py-1 rounded-full bg-[var(--surface-container)] text-[var(--on-surface)] border border-[var(--outline-variant)]">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 min-w-0">
+            <Icon name="grass" size={16} className="text-[var(--primary)] shrink-0" />
+            <p className="label-caps text-[var(--text-muted)]">
+              Produksi Pertanian & Perkebunan (Ton/Tahun)
+            </p>
+          </div>
+          <span className="self-center sm:self-auto sm:ml-auto shrink-0 label-caps px-2.5 py-1 rounded-full bg-[var(--surface-container)] text-[var(--on-surface)] border border-[var(--outline-variant)]">
             Total {totalTonaseKategori.toLocaleString("id-ID")} ton
           </span>
         </div>

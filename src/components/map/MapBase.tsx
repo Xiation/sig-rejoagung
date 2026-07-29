@@ -103,8 +103,15 @@ function MapControls({
   return (
     <div
       style={{
-        position: "absolute", top: 16, left: 16, right: 16, zIndex: 1000,
+        position: "absolute",
+        // safe-area-aware — biar gak nabrak notch/camera-cutout pas landscape di HP
+        top: "max(0.75rem, env(safe-area-inset-top))",
+        left: "max(0.75rem, env(safe-area-inset-left))",
+        zIndex: 1000,
         display: "flex", flexWrap: "wrap", gap: 8,
+        // dibatasin (bukan stretch full-width kayak sebelumnya) — biar gak numpuk sama legend
+        // yang nempel di pojok kanan (top-right), berapapun lebar layarnya
+        maxWidth: "min(70vw, 420px)",
       }}
     >
       {/* Basemap — pilihan eksklusif, dikelompokkan 1 pill */}
