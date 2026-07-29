@@ -41,6 +41,16 @@ const MODULE_META: Record<
     badge: "Peta Interaktif",
     badgeVariant: "map",
   },
+  lst: {
+    title: "Analisis Perubahan Suhu Permukaan (2020–2025)",
+    badge: "Peta Interaktif",
+    badgeVariant: "map",
+  },
+  "kesehatan-kelapa": {
+    title: "Analisis Kesehatan Vegetasi Kelapa",
+    badge: "Peta Interaktif",
+    badgeVariant: "map",
+  },
 };
 
 export default function DashboardGIS() {

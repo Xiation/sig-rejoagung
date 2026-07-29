@@ -11,6 +11,8 @@ import AsetLayer from "./layers/AsetfasumLayer";
 import SekolahLayer from "./layers/SekolahLayer";
 import PotensiLayer from "./layers/PotensiLayer";
 import SungaiLayer from "./layers/SungaiLayer";
+import LstDeltaLayer from "./layers/LstDeltaLayer";
+import KesehatanKelapaLayer from "./layers/KesehatanKelapaLayer";
 
 interface MapBaseProps {
   activeModule: string;
@@ -242,6 +244,8 @@ export default function MapBase({ activeModule }: MapBaseProps){
         {activeModule === "aset" && <AsetLayer />}
         {activeModule === "sekolah" && <SekolahLayer />}
         {activeModule === "potensi" && <PotensiLayer />}
+        {activeModule === "lst" && <LstDeltaLayer />}
+        {activeModule === "kesehatan-kelapa" && <KesehatanKelapaLayer />}
       </MapContainer>
     </div>
   );

@@ -39,6 +39,18 @@ const NAV_ITEMS = [
     icon: "school",
     group: "map",
   },
+  {
+    id: "lst",
+    label: "Perubahan Suhu Permukaan",
+    icon: "thermostat",
+    group: "map",
+  },
+  {
+    id: "kesehatan-kelapa",
+    label: "Kesehatan Vegetasi Kelapa",
+    icon: "eco",
+    group: "map",
+  },
 ];
 
 export default function Sidebar({ activeModule, setActiveModule, isOpen, onClose }: SidebarProps) {

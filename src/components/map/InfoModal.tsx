@@ -11,12 +11,14 @@ import AsetfasumModal from "./content/AsetfasumModal";
 import SekolahModal from "./content/SekolahModal";
 import PotensiModal from "./content/PotensiModal";
 import SungaiModal from "./content/SungaiModal";
+import LstDeltaModal from "./content/LstDeltaModal";
+import KesehatanKelapaModal from "./content/KesehatanKelapaModal";
 
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   data: Record<string, unknown>;
-  activeModule: "aset" | "sekolah" | "potensi" | "sungai";
+  activeModule: "aset" | "sekolah" | "potensi" | "sungai" | "lst" | "kesehatan-kelapa";
 }
 
 // Map module → label & icon untuk modal header chip
@@ -40,6 +42,16 @@ const MODULE_META: Record<string, { label: string; icon: string; chipClass: stri
     label: "Sungai & Irigasi",
     icon: "water",
     chipClass: "bg-sky-50 text-sky-700 border-sky-200",
+  },
+  lst: {
+    label: "Perubahan Suhu Permukaan",
+    icon: "thermostat",
+    chipClass: "bg-rose-50 text-rose-700 border-rose-200",
+  },
+  "kesehatan-kelapa": {
+    label: "Kesehatan Vegetasi Kelapa",
+    icon: "eco",
+    chipClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
   },
 };
 
@@ -76,6 +88,8 @@ export default function InfoModal({ isOpen, onClose, data, activeModule }: InfoM
           {activeModule === "sekolah" && <SekolahModal data={data} />}
           {activeModule === "potensi" && <PotensiModal data={data} />}
           {activeModule === "sungai" && <SungaiModal data={data} />}
+          {activeModule === "lst" && <LstDeltaModal data={data} />}
+          {activeModule === "kesehatan-kelapa" && <KesehatanKelapaModal data={data} />}
         </div>
 
         {/* ── Modal Footer ─────────────────────────────────────────────────── */}
