@@ -6,6 +6,7 @@
 
 "use client";
 
+import { createPortal } from "react-dom";
 import Icon from "@/components/ui/Icon";
 import AsetfasumModal from "./content/AsetfasumModal";
 import SekolahModal from "./content/SekolahModal";
@@ -60,16 +61,20 @@ export default function InfoModal({ isOpen, onClose, data, activeModule }: InfoM
 
   const meta = MODULE_META[activeModule] ?? MODULE_META["aset"];
 
-  return (
-    // ── Backdrop Overlay ────────────────────────────────────────────────────
-    // Modal ini dirender sebagai child React di dalam <MapContainer> (lewat AsetLayer/SungaiLayer/dst),
-    // jadi walau posisinya "fixed" (visually di atas peta), dia tetep descendant DOM dari container
-    // Leaflet — wheel/touch event bisa bubbling ke listener zoom/pan Leaflet kalau gak distop di sini.
+  // Modal ini dipanggil dari dalam AsetLayer/SungaiLayer/dst — yang notabene child React di
+  // dalam <MapContainer>. Walau CSS-nya "fixed" (visually di atas peta), tanpa portal dia tetep
+  // DESCENDANT DOM dari container Leaflet. Ini masalah ganda:
+  //   1. Wheel event bisa bubbling ke listener zoom Leaflet (bisa distop pakai stopPropagation).
+  //   2. Leaflet nyetel `touch-action: none` di container-nya buat nangkep gesture pan/zoom sendiri
+  //      — browser NOLAK native scroll buat touch-drag di DESCENDANT manapun dari container itu,
+  //      REGARDLESS stopPropagation (touch-action itu keputusan CSS-level sebelum JS event jalan,
+  //      bukan soal bubbling). Modal jadi gak bisa di-scroll pakai jari sama sekali.
+  // Fix: createPortal ke document.body — modal keluar total dari DOM tree Leaflet, jadi kedua
+  // masalah di atas otomatis gak relevan lagi (bukan descendant sama sekali).
+  return createPortal(
     <div
       className="fixed top-16 inset-x-0 bottom-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
-      onWheel={(e) => e.stopPropagation()}
-      onTouchMove={(e) => e.stopPropagation()}
     >
       {/* ── Modal Shell (max-w-2xl per DESIGN_SYS.md) ─────────────────────── */}
       {/* max-h dihitung persis dari sisa ruang backdrop (100vh - 4rem TopAppBar - 2rem padding atas/bawah) — modal gak akan pernah nabrak TopAppBar */}
@@ -111,6 +116,7 @@ export default function InfoModal({ isOpen, onClose, data, activeModule }: InfoM
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

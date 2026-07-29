@@ -109,9 +109,11 @@ function MapControls({
         left: "max(0.75rem, env(safe-area-inset-left))",
         zIndex: 1000,
         display: "flex", flexWrap: "wrap", gap: 8,
-        // dibatasin (bukan stretch full-width kayak sebelumnya) — biar gak numpuk sama legend
-        // yang nempel di pojok kanan (top-right), berapapun lebar layarnya
-        maxWidth: "min(70vw, 420px)",
+        // Reserve ruang buat MapLegendPanel (width clamp(140px,42%,200px) + right-offset ~12px +
+        // gap ~28px = ~240px worst-case) — angka ini HARUS selaras sama MapLegendPanel.tsx kalau
+        // salah satu diubah, biar gak overlap lagi di layar manapun. Pakai % (bukan vw) — resolve
+        // ke lebar container peta yang sebenarnya, bukan viewport penuh (beda kalau sidebar kebuka).
+        maxWidth: "calc(100% - 240px)",
       }}
     >
       {/* Basemap — pilihan eksklusif, dikelompokkan 1 pill */}

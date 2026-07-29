@@ -54,14 +54,14 @@ export default function EducationMetrics() {
     <div className="bg-white rounded-xl border border-[var(--outline-variant)] shadow-sm flex flex-col h-full">
 
       {/* ── Composite Header ──────────────────────────────────────────────── */}
-      <div className="px-5 py-4 border-b border-[var(--outline-variant)]/60 flex items-center gap-3">
-        <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100 shrink-0">
+      <div className="px-5 py-4 border-b border-[var(--outline-variant)]/60 flex items-center gap-2 sm:gap-3">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100 shrink-0">
           <Icon name="school" size={18} className="text-blue-600" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="section-header text-[var(--on-surface)] truncate">Aksesibilitas Pendidikan</p>
         </div>
-        <span className="shrink-0 label-caps px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+        <span className="shrink-0 label-caps px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
           {totalLembaga}<span className="hidden sm:inline"> lembaga</span>
         </span>
       </div>

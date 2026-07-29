@@ -20,8 +20,12 @@ export default function MapLegendPanel({ children, style }: { children: ReactNod
         padding: "10px 12px",
         boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
         pointerEvents: "none",
-        minWidth: "min(180px, 45vw)",
-        maxWidth: "min(220px, 60vw)",
+        // width fixed (bukan cuma min/max independen) — biar MapControls di MapBase.tsx bisa
+        // reserve ruang yang PASTI cukup (200px + gap), gak overlap di ukuran layar manapun.
+        // Pakai % (bukan vw) — % resolve ke lebar container peta yang sebenarnya (bisa lebih
+        // sempit dari viewport kalau sidebar lagi kebuka di desktop), vw selalu relatif viewport
+        // penuh jadi bisa salah hitung pas sidebar makan sebagian lebar layar.
+        width: "clamp(140px, 42%, 200px)",
         ...style,
       }}
     >
