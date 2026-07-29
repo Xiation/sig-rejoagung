@@ -6,6 +6,8 @@ import type { Feature } from "geojson";
 import type { Layer } from "leaflet";
 import L from "leaflet";
 import InfoModal from "../InfoModal";
+import style from "styled-jsx/style";
+import MapLegendPanel from "../MapLegendPanel";
 
 function getSekolahMarkerStyle(namobj: string): L.CircleMarkerOptions {
     const name = namobj.toUpperCase() ?? "";
@@ -21,7 +23,7 @@ function getSekolahMarkerStyle(namobj: string): L.CircleMarkerOptions {
     if (name.includes("SD") || name.includes("DASAR")) {
         return {
             radius: 8,
-            fillColor: "ef4444",
+            fillColor: "#ef4444",
             color: "#fff",
             weight: 2,
             fillOpacity: 0.9,
@@ -76,21 +78,7 @@ function getBufferStyle(source: string): L.PathOptions {
 
 function SekolahLegend() {
     return (
-      <div
-        style={{
-          position: "absolute",
-          top: "16px",
-          right: "16px",
-          zIndex: 1000,
-          background: "rgba(255,255,255,0.95)",
-          backdropFilter: "blur(8px)",
-          borderRadius: "12px",
-          padding: "12px 16px",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-          pointerEvents: "none",
-          minWidth: "180px",
-        }}
-      >
+      <MapLegendPanel>
         <p
           style={{
             fontSize: "11px",
@@ -126,11 +114,61 @@ function SekolahLegend() {
           </li>
         </ul>
         <p style={{ fontSize: "10px", color: "#9ca3af", marginTop: "8px" }}>
-        Klik poligon untuk detail SDA
+        Klik marker untuk detail sekolah
       </p>
-      </div>
+      </MapLegendPanel>
     );
   }
+
+// Zona service area — warna cocok sama getBufferStyle() di atas (10/30/60 menit)
+const SERVICE_AREA_ZONES = [
+  { label: "≤ 10 Menit", color: "#22c55e" },
+  { label: "10–30 Menit", color: "#eab308" },
+  { label: "30–60 Menit", color: "#ef4444" },
+];
+
+function ServiceAreaLegend() {
+  return (
+    // MapLegendPanel defaultnya top-right (dipakai SekolahLegend) — di-override ke bottom-right
+    // di sini biar 2 legend gak numpuk, sambil tetep dapet width/safe-area responsive bawaan.
+    <MapLegendPanel style={{ top: "auto", bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
+      <p
+        style={{
+          fontSize: "11px",
+          fontWeight: 700,
+          color: "#374151",
+          textTransform: "uppercase",
+          letterSpacing: "0.05em",
+          marginBottom: "8px",
+        }}
+      >
+        Service Area
+      </p>
+      {SERVICE_AREA_ZONES.map((zone) => (
+        <div key={zone.label} style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
+          <span
+            style={{
+              width: "12px",
+              height: "12px",
+              borderRadius: "3px",
+              backgroundColor: zone.color,
+              opacity: 0.6,
+              border: `1px solid ${zone.color}`,
+              display: "inline-block",
+              marginRight: "8px",
+              flexShrink: 0,
+            }}
+          />
+          <span style={{ fontSize: "12px", color: "#4b5563" }}>{zone.label}</span>
+        </div>
+      ))}
+      <p style={{ fontSize: "10px", color: "#9ca3af", marginTop: "8px" }}>
+        Radius jangkauan akses sekolah terdekat
+      </p>
+    </MapLegendPanel>
+  );
+}
+
 
 
 export default function sekolahLayer(){
@@ -215,6 +253,7 @@ return (
 
         {/* legend */}
         <SekolahLegend />
+        <ServiceAreaLegend />
 
       {isModalOpen && selectedAsset && (
         <InfoModal

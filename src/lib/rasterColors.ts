@@ -1,7 +1,7 @@
 // src/lib/rasterColors.ts
 // Fungsi warna buat raster LST Delta & Kesehatan Kelapa — dipakai bareng oleh layer (render peta)
 // dan legend (biar warna di peta & legend selalu konsisten, gak ada 2 sumber warna beda).
-// Palet ini MVP/default (lihat docs/feature/raster_modules_lst_kesehatan_kelapa.md) — belum final.
+// Palet Kesehatan Kelapa (1-5) sudah CONFIRMED tim lapangan. Palet LST Delta masih default/MVP.
 
 /** Interpolasi linear antar 2 warna RGB */
 function lerpColor(a: [number, number, number], b: [number, number, number], t: number): string {
@@ -35,20 +35,33 @@ export const LST_MIN = -0.71;
 export const LST_MAX = 7.48;
 
 /**
- * Warna kategorikal 6 kelas Kesehatan Kelapa — NETRAL, cuma buat bedain kelas, BUKAN urutan
- * sehat/gak sehat (arti tiap kelas belum dikonfirmasi, lihat Open Questions di plan doc).
- * Sama persis sama preview_kesehatan_kelapa.png yang udah dikirim ke user.
+ * Kelas kesehatan kelapa — CONFIRMED tim lapangan: cuma kelas 1-5 yang dipakai (skala sehat
+ * naik seiring angka), kelas 0 BUKAN bagian skala kesehatan (= bukan area kelapa/tidak
+ * terklasifikasi, lihat komentar kesehatanKelapaColor di bawah).
  */
-export const KESEHATAN_KELAPA_COLORS: Record<number, string> = {
-  0: "#808080",
-  1: "#e6194b",
-  2: "#f58231",
-  3: "#ffe119",
-  4: "#3cb44b",
-  5: "#4363d8",
+export const KESEHATAN_KELAPA_LABELS: Record<number, string> = {
+  1: "Sangat Tidak Sehat",
+  2: "Tidak Sehat",
+  3: "Cukup Sehat",
+  4: "Sehat",
+  5: "Sangat Sehat",
 };
 
+/** Warna gradient kesehatan (merah=sangat tidak sehat -> hijau=sangat sehat), cuma kelas 1-5. */
+export const KESEHATAN_KELAPA_COLORS: Record<number, string> = {
+  1: "#dc2626", // red-600
+  2: "#f97316", // orange-500
+  3: "#eab308", // yellow-500
+  4: "#84cc16", // lime-500
+  5: "#16a34a", // green-600
+};
+
+/**
+ * Kelas 0 -> null (transparent), BUKAN warna abu-abu kayak sebelumnya — sekarang udah confirmed
+ * kelas 0 itu "bukan area kelapa", bukan "kesehatan level 0". Transparent = sama perlakuannya
+ * kayak NaN di LST (gak ada data relevan buat ditampilin di titik itu).
+ */
 export function kesehatanKelapaColor(value: number | null | undefined): string | null {
-  if (value === null || value === undefined || Number.isNaN(value)) return null;
+  if (value === null || value === undefined || Number.isNaN(value) || value === 0) return null;
   return KESEHATAN_KELAPA_COLORS[value] ?? null;
 }

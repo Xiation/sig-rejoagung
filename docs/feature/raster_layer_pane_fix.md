@@ -10,6 +10,58 @@
 - `<TileLayer key={basemap}>` di `MapBase.tsx` sengaja di-force-remount tiap basemap ganti (`key={basemap}`) — karena raster numpang di pane yang sama, remount basemap ikut "kena imbas" ke tile raster yang nempel di pane itu → raster ilang.
 - Removal (`map.removeLayer(layer)`) di cleanup `useEffect` udah bener secara logic React (dicek ulang, gak ada race condition di kode React-nya) — tapi `georaster-layer-for-leaflet` kemungkinan besar masih ngirim tile hasil render (proses async/worker-based per-tile) SETELAH `removeLayer` dipanggil, nempelin tile "telat" itu ke pane bareng, kesannya kayak "gak ke-remove".
 
+## Setup Awal: `src/lib/` & `src/types/` (Fase 1 MVP, sebelum bug-bug di atas)
+
+Sebelum bug-bug di atas kejadian, ini fondasi yang dibangun dari nol buat modul raster (LST Delta & Kesehatan Kelapa). 4 modul (`src/types/georaster.d.ts` + 3 file `src/lib/`), masing-masing 1 tanggung jawab spesifik — dipisah biar gampang dites/diganti sendiri-sendiri, bukan digabung 1 file gede.
+
+### 1. `src/types/georaster.d.ts` — Type shim manual
+
+**Kenapa perlu:** `georaster` & `georaster-layer-for-leaflet` gak nerbitin `.d.ts` sendiri (dicek langsung di paket npm-nya, gak ada file-nya), dan `@types/georaster*` juga gak ada di npm registry (404 pas dicoba install). Tanpa ini, TypeScript nolak total import kedua library itu.
+
+**Isinya:** `declare module` buat 2 paket —
+- `"georaster"` → interface `GeoRaster` (metadata raster: `xmin/xmax/ymin/ymax`, `pixelWidth/pixelHeight`, `width/height`, `values` — array `[band][row][col]`, `projection` — kode EPSG, `noDataValue`) + fungsi `parseGeoraster(input): Promise<GeoRaster>`.
+- `"georaster-layer-for-leaflet"` → class `GeoRasterLayer extends GridLayer`, opsi `georaster`, `pixelValuesToColorFn`, `resolution`, `opacity`, `caching` (field ini ditambah belakangan, lihat "Update ke-2" di bawah).
+
+**Cuma nyakup bagian yang beneran dipakai** di project ini — bukan port lengkap semua API kedua library (gak dibutuhin, sesuai prinsip "jangan bikin kode buat kemungkinan yang belum tentu kepake").
+
+### 2. `src/lib/proj4Setup.ts` — Registrasi sistem koordinat (CRS)
+
+**Kenapa perlu:** raster GeoTIFF (`DeltaLST_2020_2025_FIX.tif`, `Kesehatan_Kelapa_2025_FIX.tif`) aslinya dalam CRS **`EPSG:32750`** (WGS 84 / UTM zone 50S) — BUKAN `EPSG:4326` (lat/lng biasa) yang dipakai Leaflet buat semua koordinat internalnya. Biar bisa di-render di posisi yang bener DAN di-query pas diklik, butuh reproject bolak-balik antar 2 sistem koordinat itu — `proj4` (library reproject) butuh definisi CRS target/sumbernya didaftarin dulu sebelum dipakai.
+
+**Isinya:** cuma 1 baris substantif:
+```ts
+proj4.defs("EPSG:32750", "+proj=utm +zone=50 +south +datum=WGS84 +units=m +no_defs");
+```
+Diimpor sebagai **side-effect** (`import "@/lib/proj4Setup"`, bukan buat dipakai return value-nya) di `LstDeltaLayer.tsx` & `KesehatanKelapaLayer.tsx` — mastiin definisi ini udah kedaftar SEBELUM parse/render/query raster manapun jalan, gak peduli urutan import lain.
+
+### 3. `src/lib/rasterQuery.ts` — Baca pixel value dari titik yang diklik user
+
+**Use case:** beda dari layer vector (Aset/Sekolah/Sungai/dll) yang punya `feature.properties` siap pakai pas diklik, raster gak punya "fitur" diskrit — semua titik di dalam extent-nya punya value sendiri-sendiri. Pas user klik peta di modul LST/Kesehatan Kelapa, perlu cara manual buat "baca angka di titik itu" biar bisa ditampilin di `InfoModal`.
+
+**Isinya:** `getPixelValueAtLatLng(georaster, lat, lng)` — 3 langkah:
+1. Convert `lat/lng` (WGS84, dari event klik Leaflet) → koordinat native raster (`EPSG:32750`) pakai `proj4`.
+2. Hitung index piksel (`col`/`row`) dari koordinat hasil convert itu, berdasarkan `xmin`/`ymax`/`pixelWidth`/`pixelHeight` raster.
+3. Ambil value dari `georaster.values[0][row][col]`.
+
+Return `null` kalau klik di luar extent raster (index piksel di luar batas) ATAU pixel-nya no-data (`NaN`) — biar layer file (caller) tau kapan **harus gak buka modal sama sekali**, bukan nampilin modal isinya "N/A" ngasal buat klik yang sebenernya di luar area relevan.
+
+### 4. `src/lib/rasterColors.ts` — Fungsi warna, dipakai bareng layer + legend
+
+**Use case:** 1 sumber kebenaran warna yang dipakai DUA tempat sekaligus — `pixelValuesToColorFn` (nentuin warna pas render tile di peta) dan komponen legend (`LstLegend`/`KesehatanLegend`) — biar warna yang keliatan di peta & yang dijelasin di legend **selalu konsisten**, gak ada 2 sumber kebenaran yang bisa kesilap beda.
+
+**Isinya:**
+- `lstDeltaColor(value, min, max)` — diverging (biru = turun ↔ putih = ~0 ↔ merah = naik, pivot persis di 0). Cocok buat data kontinu kayak LST Delta yang emang bisa naik ATAU turun.
+- `LST_MIN` / `LST_MAX` — rentang data asli (`-0.71` s/d `7.48`, dicek langsung dari isi file GeoTIFF, lihat `tif_data_preview.md`), dipakai buat normalisasi warna (poin di atas) DAN label angka di legend.
+- `kesehatanKelapaColor(value)` + `KESEHATAN_KELAPA_COLORS` — 6 warna kategorikal **NETRAL** (bukan gradient sehat↔gak sehat), karena arti tiap kelas (0-5) Kesehatan Kelapa **belum dikonfirmasi** tim lapangan (lihat Open Questions di `raster_modules_lst_kesehatan_kelapa.md`) — sengaja gak nebak urutan "mana yang sehat", biar gak nyesatin.
+
+### 5. `src/lib/rasterPane.ts` — awal mula (sebelum evolusi di bawah)
+
+Modul ini yang **paling banyak berubah** sepanjang dokumen ini. Versi AWALNYA (sebelum bug pertama ketemu) cuma 1 fungsi: `ensureRasterPane(map)` — bikin Leaflet Pane khusus, misah dari `tilePane` bawaan Leaflet. Alasan bikin dari awal: raster GeoTIFF butuh render di layer/pane TERSENDIRI (bukan numpang pane default manapun), biar z-index-nya bisa diatur eksplisit (rencana dari awal: di bawah boundary desa, di atas basemap) — ini murni soal *layering visual*, belum nyangkut isu remove/cache yang baru ketemu belakangan.
+
+Evolusi lengkapnya (nambah `setActiveRasterLayer`/`removeIfActiveRasterLayer`, dan kenapa itu perlu) ada di section "Fix" & "Update" di bawah — itu semua respons dari bug yang ketemu belakangan pas ditest, **bukan** bagian dari desain awal.
+
+---
+
 ## Fix: Pane Leaflet khusus raster + defensive cleanup
 
 ### 1. `src/lib/rasterPane.ts` (baru)
@@ -193,3 +245,22 @@ Diagnostic `console.log` yang ditambahin buat gather evidence udah **dibersihin*
 
 ### File yang diubah (update ke-2)
 `src/types/georaster.d.ts`, `src/lib/rasterPane.ts` (bersihin logging), `src/components/map/layers/LstDeltaLayer.tsx`, `src/components/map/layers/KesehatanKelapaLayer.tsx`
+
+---
+
+## Update ke-3: Kelas Kesehatan Kelapa CONFIRMED — palet & label semantik
+
+Bukan bug — ini nindaklanjutin Open Question #1 (`raster_modules_lst_kesehatan_kelapa.md`) yang akhirnya kejawab: tim lapangan confirm cuma **kelas 1-5** yang dipakai (1=Sangat Tidak Sehat s/d 5=Sangat Sehat), **kelas 0 BUKAN bagian skala kesehatan** — sesuai hipotesis awal di `tif_data_preview.md` (jumlah pixel kelas 0 ≈ jumlah NaN di LST, indikasi "bukan area kelapa").
+
+### Perubahan
+- `src/lib/rasterColors.ts`: `KESEHATAN_KELAPA_COLORS` diganti dari 6 warna kategorikal netral (termasuk kelas 0 abu-abu) jadi **5 warna gradient sehat** (merah→hijau, cuma kelas 1-5). Tambah `KESEHATAN_KELAPA_LABELS` (nama kelas). `kesehatanKelapaColor()` sekarang return `null` (transparent) buat kelas 0 — diperlakukan sama kayak `NaN`, bukan digambar abu-abu lagi.
+- `src/components/map/layers/KesehatanKelapaLayer.tsx`: legend nampilin nama kelas (bukan "Kelas N" mentah). Klik di area kelas 0 sekarang **gak buka modal** (disamain kayak klik di luar extent/NaN) — konsisten sama "gak ada data relevan di titik ini".
+- `src/components/map/content/KesehatanKelapaModal.tsx`: judul modal nampilin label semantik ("Sangat Sehat" dst) + warna ikon ikutin kelas, bukan "Kelas N" polos. Disclaimer "belum dikonfirmasi tim lapangan" dihapus (udah gak relevan, CONFIRMED).
+
+### Verifikasi
+1. `npx tsc --noEmit` — **clean** ✓.
+2. `npx next build` — **sukses** ✓.
+3. **Manual di browser (belum dites):** buka modul Kesehatan Kelapa — warna raster sekarang gradient merah→hijau (bukan 6 warna random), area kelas 0 transparent (nembus liat basemap/boundary di baliknya), klik area kelas 0 gak munculin modal, klik kelas 1-5 munculin modal dengan label sehat yang bener.
+
+### File yang diubah (update ke-3)
+`src/lib/rasterColors.ts`, `src/components/map/layers/KesehatanKelapaLayer.tsx`, `src/components/map/content/KesehatanKelapaModal.tsx`, `docs/feature/raster_modules_lst_kesehatan_kelapa.md` (Open Question #1 di-resolve)

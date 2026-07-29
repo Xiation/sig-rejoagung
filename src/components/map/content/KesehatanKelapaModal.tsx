@@ -1,24 +1,26 @@
 // src/components/map/content/KesehatanKelapaModal.tsx
-// Fase 1 (MVP) — nampilin kelas apa adanya, belum ada label semantik (arti kelas belum dikonfirmasi
-// tim geodesi). Lihat plan doc, Fase 2, buat rencana pengayaan setelah dikonfirmasi.
+// Label semantik kelas 1-5 CONFIRMED tim lapangan (lihat rasterColors.ts, KESEHATAN_KELAPA_LABELS).
 "use client";
 
 import Icon from "@/components/ui/Icon";
+import { KESEHATAN_KELAPA_LABELS, KESEHATAN_KELAPA_COLORS } from "@/lib/rasterColors";
 
 export default function KesehatanKelapaModal({ data }: { data: Record<string, unknown> }) {
   const kelas = data.value as number;
   const lat = data.lat as number;
   const lng = data.lng as number;
+  const label = KESEHATAN_KELAPA_LABELS[kelas] ?? `Kelas ${kelas}`;
+  const color = KESEHATAN_KELAPA_COLORS[kelas] ?? "#6b7280";
 
   return (
     <div className="p-6 space-y-5">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border text-emerald-600 bg-emerald-50 border-emerald-200">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border" style={{ color, backgroundColor: `${color}1a`, borderColor: `${color}4d` }}>
           <Icon name="eco" size={24} />
         </div>
         <div>
-          <h3 className="headline-lg text-[var(--on-surface)]">Kelas {kelas}</h3>
-          <p className="body-base text-[var(--text-muted)] mt-0.5">Kesehatan Vegetasi Kelapa (2025)</p>
+          <h3 className="headline-lg text-[var(--on-surface)]">{label}</h3>
+          <p className="body-base text-[var(--text-muted)] mt-0.5">Kesehatan Vegetasi Kelapa (2025) · Kelas {kelas}/5</p>
         </div>
       </div>
 
@@ -33,13 +35,6 @@ export default function KesehatanKelapaModal({ data }: { data: Record<string, un
           <span className="label-caps text-[var(--text-muted)]">Longitude</span>
           <span className="body-base text-[var(--on-surface)] font-semibold">{lng.toFixed(6)}</span>
         </div>
-      </div>
-
-      <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 flex items-start gap-2">
-        <Icon name="info" size={16} className="text-amber-600 mt-0.5 shrink-0" />
-        <p className="micro-copy text-amber-800 leading-relaxed">
-          Kelas 0-5 — makna tiap kelas (mana yang sehat/gak sehat) belum dikonfirmasi tim lapangan. Angka ditampilkan apa adanya.
-        </p>
       </div>
     </div>
   );

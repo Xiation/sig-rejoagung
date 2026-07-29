@@ -123,7 +123,7 @@ function FasumLegend(){
         </div>
       ))}
       <p style={{ fontSize: "10px", color: "#9ca3af", marginTop: "8px" }}>
-        Klik poligon untuk detail SDA
+        Klik marker untuk detail fasilitas
       </p>
     </MapLegendPanel>
   );

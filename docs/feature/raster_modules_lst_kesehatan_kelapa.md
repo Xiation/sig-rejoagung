@@ -88,9 +88,9 @@ User belum sempat komunikasi ke anak geodesi soal arti kelas Kesehatan Kelapa �
 - Kemungkinan nambah statistik ringkasan di level modul (rata-rata delta LST desa, distribusi kelas kesehatan, dll) — di luar scope raw-value-per-klik.
 
 ## Status Open Questions
-1. **Arti kelas `Kesehatan_Kelapa` 0-5** — **belum bisa dijawab** (belum dikomunikasikan ke anak geodesi). Gak nge-block Fase 1 (MVP jalan tanpa perlu tau ini), tapi jadi syarat mulai Fase 2.
+1. **Arti kelas `Kesehatan_Kelapa` 0-5** — **CONFIRMED tim lapangan**: cuma **kelas 1-5** yang dipakai (1=Sangat Tidak Sehat, 2=Tidak Sehat, 3=Cukup Sehat, 4=Sehat, 5=Sangat Sehat). Kelas **0 BUKAN bagian skala kesehatan** — sesuai hipotesis awal (lihat `tif_data_preview.md`, jumlah pixel kelas 0 ≈ jumlah NaN di LST), diperlakukan sebagai "bukan area kelapa/no-data". Palet warna & label semantik udah diupdate (`src/lib/rasterColors.ts` — lihat `docs/feature/fix/` buat detail perubahan kode).
 2. **Satuan `DeltaLST`** — **CONFIRMED: Celsius (°C)**.
-3. **Palet warna final** — **pakai default dulu buat MVP** (diverging blue-white-red buat LST, 6 warna kategorikal netral buat Kesehatan — persis kayak preview yang udah dikirim di `tif_data_preview.md`). Direvisi di Fase 2 kalau perlu.
+3. **Palet warna final** — **Kesehatan Kelapa CONFIRMED** (red→green gradient 1-5, sesuai poin 1). **LST masih default/MVP** (diverging blue-white-red), belum ada konfirmasi lanjutan soal ini.
 
 ## Verifikasi
 1. `pnpm add georaster georaster-layer-for-leaflet proj4` — pastikan gak ada conflict versi.
