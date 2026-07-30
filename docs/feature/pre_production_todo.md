@@ -83,3 +83,19 @@ Dokumen ini berisi daftar tugas penyempurnaan ( *polish* ) dan penambahan fitur 
 
 - [ ] **Pembuatan Service Layer (Jembatan API):** Buat folder khusus (misal: `src/services/api.ts`) yang berisi fungsi-fungsi *asynchronous* (`async function`) yang bertugas mengembalikan (*return*) data dari `src/constants/` (simulasi proses *fetch* data).
 - [ ] **Future-Proofing Komponen:** Ubah komponen UI agar memanggil fungsi dari *Service Layer* secara *asynchronous* (misal pakai `useEffect` atau server components). Ini mempersiapkan transisi mulus di mana gaya penulisan *fetch* data sudah terbentuk, sehingga siap jika nanti website migrasi menjadi *full-stack* dengan *backend* sungguhan.
+
+## 10. Fitur Export/Download Master Data (Berbasis Excel)
+**Rasional:** Tombol "Export Data" di `Sidebar.tsx` (footer sidebar, sejajar status indicator) udah ada dari awal tapi masih placeholder statis — `onClick={() => {}}`, gak ngapa-ngapain.
+
+- [x] **Revisi scope:** ternyata gak perlu generate Excel dari `src/constants/*.ts` (rencana awal, lihat versi coret di bawah) — user udah punya file master data jadi (`public/data/database/Database_Aset_Desa_Rejoagung.xlsx`, 32KB). Tombol tinggal download file statis itu apa adanya, gak perlu library `xlsx`/generate workbook sama sekali.
+- [x] **Implementasi:** `Sidebar.tsx` — `<button onClick={() => {}}>` diganti `<a href="/data/database/Database_Aset_Desa_Rejoagung.xlsx" download>` (native browser download, gak butuh JS trigger). `aria-label` diupdate dari "Export Data GeoJSON" (label lama, gak akurat) jadi "Download Master Data Excel".
+
+<details>
+<summary>Rencana awal (dicoret, ternyata gak relevan — disimpan buat konteks histori)</summary>
+
+- ~~Pilih pendekatan generate Excel client-side pakai library `xlsx`/SheetJS~~
+- ~~Tentuin scope & struktur data yang di-export dari `src/constants/*.ts` (multi-sheet workbook)~~
+- ~~Buat util function `src/lib/exportExcel.ts` buat generate + trigger download~~
+- ~~UX loading/disabled state pas generate~~
+
+</details>

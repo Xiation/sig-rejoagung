@@ -152,15 +152,16 @@ export default function Sidebar({ activeModule, setActiveModule, isOpen, onClose
 
       {/* ── Footer — Export Data + Status ── */}
       <div className="p-4 border-t border-[var(--outline-variant)]/40 space-y-3">
-        {/* Export Data Button (statis — sesuai scope MVP) */}
-        <button
+        {/* Export Data — download file master data Excel statis dari public/data/database/ */}
+        <a
+          href="/data/database/Database_Aset_Desa_Rejoagung.xlsx"
+          download
           className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-[var(--outline-variant)] text-[var(--secondary)] rounded-lg body-base font-semibold hover:bg-[var(--surface-container-low)] transition-colors shadow-sm"
-          onClick={() => {}}
-          aria-label="Export Data GeoJSON"
+          aria-label="Download Master Data Excel"
         >
           <Icon name="download" size={18} className="text-[var(--secondary)]" />
           Export Data
-        </button>
+        </a>
 
         {/* Status indicator */}
         <div className="flex items-center gap-2 px-1">
