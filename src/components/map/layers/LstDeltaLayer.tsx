@@ -10,12 +10,14 @@ import type { LeafletMouseEvent } from "leaflet";
 import parseGeoraster, { type GeoRaster } from "georaster";
 import GeoRasterLayer from "georaster-layer-for-leaflet";
 import InfoModal from "../InfoModal";
+import LstAnalysisInfoModal from "../content/LstAnalysisInfoModal";
 import { lstDeltaColor, LST_MIN, LST_MAX } from "@/lib/rasterColors";
 import { getPixelValueAtLatLng } from "@/lib/rasterQuery";
 import { ensureRasterPane, RASTER_PANE_NAME, setActiveRasterLayer, removeIfActiveRasterLayer } from "@/lib/rasterPane";
 import MapLegendPanel from "../MapLegendPanel";
+import Icon from "@/components/ui/Icon";
 
-function LstLegend() {
+function LstLegend({ onInfoClick }: { onInfoClick: () => void }) {
   return (
     <MapLegendPanel>
       <p style={{ fontSize: 11, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
@@ -28,6 +30,16 @@ function LstLegend() {
         <span>+{LST_MAX}°C</span>
       </div>
       <p style={{ fontSize: 10, color: "#9ca3af", marginTop: 8 }}>Klik peta untuk lihat nilai titik</p>
+      {/* MapLegendPanel default-nya pointerEvents: "none" (biar gak nge-block interaksi peta di
+          balik card) — tombol ini butuh pointerEvents: "auto" sendiri biar bisa diklik. */}
+      <button
+        onClick={onInfoClick}
+        style={{ pointerEvents: "auto" }}
+        className="mt-2 w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg border border-[var(--outline-variant)] text-[11px] font-semibold text-[var(--secondary)] hover:bg-[var(--surface-container-low)] transition-colors"
+      >
+        <Icon name="info" size={14} />
+        Analisis & Kaitan Stunting
+      </button>
     </MapLegendPanel>
   );
 }
@@ -36,6 +48,7 @@ export default function LstDeltaLayer() {
   const map = useMap();
   const [georaster, setGeoraster] = useState<GeoRaster | null>(null);
   const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
+  const [showAnalysisInfo, setShowAnalysisInfo] = useState(false);
 
   // Fetch + render raster
   useEffect(() => {
@@ -88,10 +101,11 @@ export default function LstDeltaLayer() {
 
   return (
     <>
-      <LstLegend />
+      <LstLegend onInfoClick={() => setShowAnalysisInfo(true)} />
       {selected && (
         <InfoModal data={selected} isOpen={true} onClose={() => setSelected(null)} activeModule="lst" />
       )}
+      <LstAnalysisInfoModal isOpen={showAnalysisInfo} onClose={() => setShowAnalysisInfo(false)} />
     </>
   );
 }
