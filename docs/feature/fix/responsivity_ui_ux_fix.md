@@ -90,6 +90,12 @@ Detail baru dari user yang jadi kunci: **"didrag ke bawah"** — spesifik soal T
 
 **Fix final:** `InfoModal.tsx` di-render pakai **`createPortal(..., document.body)`** dari `react-dom`. Modal keluar total dari DOM tree Leaflet — bukan descendant sama sekali, jadi 2 masalah (wheel bubbling DAN touch-action inheritance) otomatis gak relevan lagi. Bukan nutupin gejala, tapi ngilangin penyebabnya.
 
+**Langkah fix (ringkas):**
+1. Import `createPortal` dari `react-dom` di `InfoModal.tsx`.
+2. Bungkus return JSX modal (backdrop + shell) pakai `createPortal(<div>...</div>, document.body)` — target portal-nya `document.body`, bukan lagi child di dalam tree `<MapContainer>`.
+3. Hapus `onWheel`/`onTouchMove` + `stopPropagation()` di backdrop (fix ronde 1) — udah gak perlu, portal ngilangin masalah dari akarnya (bukan descendant Leaflet lagi), bukan cuma nutup gejala.
+4. Verifikasi: `npx tsc --noEmit` clean, lalu tes manual — scroll wheel (desktop) & touch-drag (mobile) di modal jalan normal, peta di belakang gak ikut ke-zoom/geser.
+
 ### 2 & 3. Legend overlap — reservasi ruang independen ternyata gak cukup
 
 `MapControls` (maxWidth `min(70vw,420px)`) dan `MapLegendPanel` (width `min(180px,45vw)` s/d `min(220px,60vw)`) itu **2 komponen independen** yang masing-masing ngitung lebar sendiri **tanpa saling tau**. Dihitung ulang manual: di viewport ~500px, MapControls bisa sampe 350px + Legend bisa sampe 220px = 570px, LEBIH dari 500px viewport — overlap ~70px. Bug-nya bukan di logic masing-masing, tapi di gak adanya KOORDINASI antar keduanya.
@@ -148,4 +154,4 @@ User notice: legend modul **Aset & Fasum** (`AsetfasumLayer.tsx`) footer-nya nul
 - **Manual di browser — user udah konfirmasi AMAN** (laptop mousewheel, mobile portrait & landscape, semua 8 poin).
 
 ## Dokumen terkait
-- `docs/feature/responsive_ux_fixes.md` — versi kerja/working notes (ditulis progresif pas ngerjain, isi sama tapi kurang narasi dibanding dokumen ini)
+- `docs/feature/responsive_ux_fixes.md` (versi kerja/working notes) udah di-merge ke sini — dihapus, isinya sepenuhnya kecover di dokumen ini (dokumen ini superset-nya, sama + narasi RONDE 3).
