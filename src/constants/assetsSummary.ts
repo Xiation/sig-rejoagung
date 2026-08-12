@@ -10,7 +10,6 @@ export const assetsSummary = [
     value: "44",
     unit: "aset",
     icon: "account_balance",
-    accentColor: "#1d4ed8",
     bgColor: "#eff6ff",
     borderColor: "#bfdbfe",
   },
@@ -20,7 +19,6 @@ export const assetsSummary = [
     value: "44,768",
     unit: "m²",
     icon: "square_foot",
-    accentColor: "#059669",
     bgColor: "#f0fdf4",
     borderColor: "#bbf7d0",
   },
@@ -30,7 +28,6 @@ export const assetsSummary = [
     value: "4",
     unit: "kategori",
     icon: "category",
-    accentColor: "#7c3aed",
     bgColor: "#faf5ff",
     borderColor: "#ddd6fe",
   },
@@ -40,7 +37,6 @@ export const assetsSummary = [
     value: "7",
     unit: "aset",
     icon: "warning",
-    accentColor: "#d97706",
     bgColor: "#fffbeb",
     borderColor: "#fde68a",
   },
@@ -58,9 +54,9 @@ export const categoryData = [
 ];
 
 export const ownershipData = [
-    { status: "Hak Milik", jumlah: 25, persen: 56.8, color: "#10b981" },
+  { status: "Hak Milik", jumlah: 25, persen: 56.8, color: "#059669" },
   { status: "Belum Terverifikasi", jumlah: 6, persen: 13.6, color: "#f59e0b" },
-  { status: "Hak Wakaf", jumlah: 8, persen: 18.2, color: "#3b82f6" },
-  { status: "Kosong / Tanpa Dokumen", jumlah: 4, persen: 9.1, color: "#ef4444" },
-  { status: "Hak Pakai", jumlah: 1, persen: 2.3, color: "#8b5cf6" },
+  { status: "Hak Wakaf", jumlah: 8, persen: 18.2, color: "#64748b" },
+  { status: "Kosong / Tanpa Dokumen", jumlah: 4, persen: 9.1, color: "#e11d48" },
+  { status: "Hak Pakai", jumlah: 1, persen: 2.3, color: "#94a3b8" },
 ];

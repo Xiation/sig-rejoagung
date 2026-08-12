@@ -39,7 +39,7 @@ const tierData = JENJANG_ORDER.map((jenjang) => ({
 const ZONA_ORDER: Array<{ label: string; color: string }> = [
   { label: "< 10 Menit", color: "#10b981" },
   { label: "10–30 Menit", color: "#f59e0b" },
-  { label: "30–60 Menit", color: "#ef4444" },
+  { label: "30–60 Menit", color: "#e11d48" },
 ];
 const zonaCounts = SEKOLAH_LIST.reduce<Record<string, number>>((acc, s) => {
   acc[s.zonaWaktu] = (acc[s.zonaWaktu] ?? 0) + 1;
@@ -55,13 +55,13 @@ export default function EducationMetrics() {
 
       {/* ── Composite Header ──────────────────────────────────────────────── */}
       <div className="px-5 py-4 border-b border-[var(--outline-variant)]/60 flex items-center gap-2 sm:gap-3">
-        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100 shrink-0">
-          <Icon name="school" size={18} className="text-blue-600" />
+        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[var(--surface-container)] rounded-lg flex items-center justify-center border border-[var(--outline-variant)] shrink-0">
+          <Icon name="school" size={18} className="text-[var(--primary)]" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="section-header text-[var(--on-surface)] truncate">Aksesibilitas Pendidikan</p>
         </div>
-        <span className="shrink-0 label-caps px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+        <span className="shrink-0 label-caps px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[var(--primary-container)] text-[var(--on-primary-container)] border border-emerald-200">
           {totalLembaga}<span className="hidden sm:inline"> lembaga</span>
         </span>
       </div>

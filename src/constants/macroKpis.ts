@@ -33,8 +33,8 @@ export const MACRO_KPIS = [
     unit: "– Landai",
     icon: "terrain",
     watermark: "landscape",
-    iconBg: "bg-violet-50",
-    iconColor: "text-violet-600",
+    iconBg: "bg-[var(--surface-container)]",
+    iconColor: "text-[var(--secondary)]",
     valueColor: "text-[var(--on-surface)]",
   },
 ];

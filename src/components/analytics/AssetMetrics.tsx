@@ -11,6 +11,8 @@ import {
 } from "@/constants/assetsSummary";
 import Icon from "@/components/ui/Icon";
 
+
+const CATEGORY_CHART_COLORS = ["#059669", "#475569", "#94a3b8", "#64748b", "#cbd5e1"];
 export default function AssetMetrics(){
     return (
     <div className="space-y-6">
@@ -25,13 +27,7 @@ export default function AssetMetrics(){
             <CardContent className="p-5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <Icon name={stat.icon} size={28} className="text-[var(--on-surface)]" />
-                <span
-                  className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                  style={{
-                    backgroundColor: stat.accentColor + "20",
-                    color: stat.accentColor,
-                  }}
-                >
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[var(--primary-container)] text-[var(--primary)]">
                   2026
                 </span>
               </div>
@@ -118,7 +114,7 @@ export default function AssetMetrics(){
                   <Tooltip formatter={(value) => [`${value} aset`, "Jumlah"]} />
                   <Bar dataKey="jumlah" radius={[4, 4, 0, 0]}>
                     {categoryData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
+                      <Cell key={index} fill={CATEGORY_CHART_COLORS[index % CATEGORY_CHART_COLORS.length]} />
                     ))}
                   </Bar>
                 </BarChart>

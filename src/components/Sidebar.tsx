@@ -78,7 +78,7 @@ export default function Sidebar({ activeModule, setActiveModule, isOpen, onClose
         style={{ width: "18rem" }}
       >
       {/* ── Brand Header ── */}
-      <div className="px-6 py-5 border-b border-[var(--outline-variant)]/40">
+      <div className="px-6 py-5 ">
         <div className="flex items-center gap-3">
           {/* Logo mark: icon dalam kotak abu-abu — sesuai mockup */}
           <div className="w-10 h-10 rounded-lg bg-[var(--surface-container-low)] border border-[var(--outline-variant)] flex items-center justify-center shrink-0">

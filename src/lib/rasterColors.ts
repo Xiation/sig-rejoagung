@@ -49,18 +49,14 @@ export const KESEHATAN_KELAPA_LABELS: Record<number, string> = {
 
 /** Warna gradient kesehatan (merah=sangat tidak sehat -> hijau=sangat sehat), cuma kelas 1-5. */
 export const KESEHATAN_KELAPA_COLORS: Record<number, string> = {
-  1: "#dc2626", // red-600
-  2: "#f97316", // orange-500
-  3: "#eab308", // yellow-500
-  4: "#84cc16", // lime-500
-  5: "#16a34a", // green-600
+  1: "#dc2626", 
+  2: "#f97316", 
+  3: "#eab308", 
+  4: "#84cc16", 
+  5: "#16a34a", 
 };
 
-/**
- * Kelas 0 -> null (transparent), BUKAN warna abu-abu kayak sebelumnya — sekarang udah confirmed
- * kelas 0 itu "bukan area kelapa", bukan "kesehatan level 0". Transparent = sama perlakuannya
- * kayak NaN di LST (gak ada data relevan buat ditampilin di titik itu).
- */
+
 export function kesehatanKelapaColor(value: number | null | undefined): string | null {
   if (value === null || value === undefined || Number.isNaN(value) || value === 0) return null;
   return KESEHATAN_KELAPA_COLORS[value] ?? null;

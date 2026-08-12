@@ -168,14 +168,14 @@ export const DEFAULT_DETAIL: SekolahDetail = {
 
 // Jenjang → warna marker (satu-satunya sumber, dipakai SekolahModal & EducationMetrics)
 export const JENJANG_COLORS: Record<string, string> = {
-  TK: "#ec4899",
-  SD: "#ef4444",
-  "SD/MI": "#ef4444",
-  "SMP/MTs": "#3b82f6",
-  SMP: "#3b82f6",
-  SMK: "#eab308",
-  Pesantren: "#8b5cf6",
-  SLB: "#06b6d4",
+  TK: "#9a3412",
+  SD: "#c2410c",
+  "SD/MI": "#c2410c",
+  "SMP/MTs": "#ea580c",
+  SMP: "#ea580c",
+  SMK: "#f97316",
+  Pesantren: "#fb923c",
+  SLB: "#fdba74",
 };
 
 // Coverage Index — dihitung ulang pakai angka luas ring Service Area terbaru dari temen geodesi.

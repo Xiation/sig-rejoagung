@@ -1,6 +1,6 @@
 // src/components/map/content/PotensiModal.tsx
 // Phase 4 — Content: Potensi Lahan & SDA (Modal heavy-data per DESIGN_SYS.md)
-// Layout: Header → 2-col (Geo Profile kiri | Inventory kanan) → Actionable Insights bawah
+// Layout: Header → Geo Profile (full-width) → Inventory (full-width) → Actionable Insights bawah
 
 "use client";
 
@@ -71,7 +71,7 @@ function SectionBlock({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`rounded-xl border p-4 space-y-3 ${bgClass}`}>
+    <div className={`rounded-2xl border p-4 space-y-3 ${bgClass}`}>
       <div className="flex items-center gap-2">
         <Icon name={icon} size={16} className={titleClass} />
         <p className={`label-caps ${titleClass}`}>{title}</p>
@@ -104,12 +104,11 @@ export default function PotensiModal({ data }: { data: Record<string, unknown> }
         </div>
         {level && (
           <span
-            className="inline-block label-caps px-3 py-1.5 rounded-full shrink-0 border mt-1"
-            style={{
-              backgroundColor: isSangatTinggi ? "#dcfce7" : "#dbeafe",
-              color: isSangatTinggi ? "#15803d" : "#1d4ed8",
-              borderColor: isSangatTinggi ? "#bbf7d0" : "#bfdbfe",
-            }}
+            className={`inline-block label-caps px-3 py-1.5 rounded-full shrink-0 border mt-1 ${
+              isSangatTinggi
+                ? "bg-[var(--primary-container)] text-[var(--on-primary-container)] border-emerald-200"
+                : "bg-emerald-50 text-emerald-600 border-emerald-100"
+            }`}
           >
             ⭐ Potensi {level}
           </span>
@@ -118,30 +117,39 @@ export default function PotensiModal({ data }: { data: Record<string, unknown> }
 
       <div className="border-t border-[var(--outline-variant)]/60" />
 
-      {/* ── Body: 2 Kolom per DESIGN_SYS.md ─────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-        {/* Kiri: Geographical Profile */}
-        <div className="space-y-4">
-          <p className="label-caps text-[var(--text-muted)]">Profil Geografis</p>
-          <div className="bg-[var(--surface-container-low)] rounded-xl border border-[var(--outline-variant)]/50 p-4 space-y-3">
+      {/* ── Profil Geografis — full width, grid 3 kolom biar gak makan tinggi ── */}
+      <div className="space-y-4">
+        <p className="label-caps text-[var(--text-muted)]">Profil Geografis</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
             <InfoRow label="Jenis Tanah" value={d["Jenis Tanah"]} icon="landscape" />
+          </div>
+          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
             <InfoRow label="pH Tanah" value={d["pH Tanah"]} icon="science" />
+          </div>
+          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
             <InfoRow label="Topografi" value={d["Topografi"]} icon="terrain" />
+          </div>
+          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
             <InfoRow
               label="Elevasi Rata-rata"
               value={d["Elevasi Rata-rata (mdpl)"] ? `${d["Elevasi Rata-rata (mdpl)"]} mdpl` : undefined}
               icon="altitude"
             />
+          </div>
+          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
             <InfoRow label="Kualitas Air" value={d["Kualitas Air"]} icon="water_drop" />
+          </div>
+          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
             <InfoRow label="Sumber Air" value={d["Sumber Air"]} icon="waves" />
           </div>
         </div>
+      </div>
 
-        {/* Kanan: Inventory & Commodity */}
-        <div className="space-y-4">
-          <p className="label-caps text-[var(--text-muted)]">Inventaris Komoditas</p>
-
+      {/* ── Inventaris Komoditas — full width, 2 SectionBlock sejajar ─────────── */}
+      <div className="space-y-4">
+        <p className="label-caps text-[var(--text-muted)]">Inventaris Komoditas</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SectionBlock
             icon="grain"
             title="Pertanian & Kebun"
@@ -204,7 +212,7 @@ export default function PotensiModal({ data }: { data: Record<string, unknown> }
       {/* ── Actionable Insights (DESIGN_SYS.md: Error/Success Containers) ─────── */}
       <div className="space-y-3">
         {/* Ancaman — Error Container */}
-        <div className="bg-[var(--error-container)] border border-rose-200 rounded-xl p-4">
+        <div className="bg-[var(--error-container)] border border-rose-200 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
             <Icon name="warning" size={16} className="text-[var(--on-error-container)]" />
             <p className="label-caps text-[var(--on-error-container)]">Ancaman SDA</p>
@@ -215,7 +223,7 @@ export default function PotensiModal({ data }: { data: Record<string, unknown> }
         </div>
 
         {/* Rekomendasi — Success Container */}
-        <div className="bg-[var(--success-container)] border border-emerald-200 rounded-xl p-4">
+        <div className="bg-[var(--success-container)] border border-emerald-200 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
             <Icon name="lightbulb" size={16} className="text-[var(--on-success-container)]" />
             <p className="label-caps text-[var(--on-success-container)]">Rekomendasi Kebijakan</p>
