@@ -1,6 +1,8 @@
 // src/components/map/content/PotensiModal.tsx
 // Phase 4 — Content: Potensi Lahan & SDA (Modal heavy-data per DESIGN_SYS.md)
-// Layout: Header → Geo Profile (full-width) → Inventory (full-width) → Actionable Insights bawah
+// Layout (potensi_modal.md — Bento Parcel Insights): Header → Macro-Metric Row (3-col) →
+// Secondary Geo Detail (3-col) → Production Hub (full-width) → Secondary Inventory (2-col) →
+// Insight Layer (2-col: Threat rose | Optimization emerald)
 
 "use client";
 
@@ -53,6 +55,42 @@ function InfoRow({
         <span className="label-caps text-[var(--text-muted)]">{label}</span>
       </div>
       <span className="body-base text-[var(--on-surface)] font-semibold">{value ?? NA}</span>
+    </div>
+  );
+}
+
+// Macro-Metric card — potensi_modal.md: "Large, high-contrast numbers ... key dimensions remain
+// the focal point". `metric` variant buat field numerik (display-metric besar), `text` variant
+// (default) buat field kategorik (section-header, tetep lebih menonjol dari InfoRow biasa).
+function MacroCard({
+  label,
+  value,
+  unit,
+  icon,
+  variant = "text",
+}: {
+  label: string;
+  value?: string | number | null;
+  unit?: string;
+  icon: string;
+  variant?: "metric" | "text";
+}) {
+  return (
+    <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-4 flex flex-col gap-1.5">
+      <div className="flex items-center gap-1.5">
+        <Icon name={icon} size={14} className="text-[var(--text-muted)]" />
+        <span className="label-caps text-[var(--text-muted)]">{label}</span>
+      </div>
+      {variant === "metric" ? (
+        <p className="display-metric text-[var(--on-surface)]">
+          {value ?? NA}
+          {unit && value != null && (
+            <span className="text-base font-normal text-[var(--text-muted)] ml-1">{unit}</span>
+          )}
+        </p>
+      ) : (
+        <p className="section-header text-[var(--on-surface)] truncate">{value ?? NA}</p>
+      )}
     </div>
   );
 }
@@ -117,101 +155,95 @@ export default function PotensiModal({ data }: { data: Record<string, unknown> }
 
       <div className="border-t border-[var(--outline-variant)]/60" />
 
-      {/* ── Profil Geografis — full width, grid 3 kolom biar gak makan tinggi ── */}
-      <div className="space-y-4">
-        <p className="label-caps text-[var(--text-muted)]">Profil Geografis</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
-            <InfoRow label="Jenis Tanah" value={d["Jenis Tanah"]} icon="landscape" />
-          </div>
-          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
-            <InfoRow label="pH Tanah" value={d["pH Tanah"]} icon="science" />
-          </div>
-          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
-            <InfoRow label="Topografi" value={d["Topografi"]} icon="terrain" />
-          </div>
-          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
-            <InfoRow
-              label="Elevasi Rata-rata"
-              value={d["Elevasi Rata-rata (mdpl)"] ? `${d["Elevasi Rata-rata (mdpl)"]} mdpl` : undefined}
-              icon="altitude"
-            />
-          </div>
-          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
-            <InfoRow label="Kualitas Air" value={d["Kualitas Air"]} icon="water_drop" />
-          </div>
-          <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
-            <InfoRow label="Sumber Air" value={d["Sumber Air"]} icon="waves" />
-          </div>
+      {/* ── Macro-Metric Row — 3 kolom, fisik geografis utama (potensi_modal.md §1) ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <MacroCard
+          label="Elevasi Rata-rata"
+          value={d["Elevasi Rata-rata (mdpl)"]}
+          unit="mdpl"
+          icon="altitude"
+          variant="metric"
+        />
+        <MacroCard label="Topografi" value={d["Topografi"]} icon="terrain" />
+        <MacroCard label="Jenis Tanah" value={d["Jenis Tanah"]} icon="landscape" />
+      </div>
+
+      {/* ── Detail Geografis Sekunder — 3 kolom, kompak ─────────────────────── */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
+          <InfoRow label="pH Tanah" value={d["pH Tanah"]} icon="science" />
+        </div>
+        <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
+          <InfoRow label="Kualitas Air" value={d["Kualitas Air"]} icon="water_drop" />
+        </div>
+        <div className="bg-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/50 p-3">
+          <InfoRow label="Sumber Air" value={d["Sumber Air"]} icon="waves" />
         </div>
       </div>
 
-      {/* ── Inventaris Komoditas — full width, 2 SectionBlock sejajar ─────────── */}
-      <div className="space-y-4">
-        <p className="label-caps text-[var(--text-muted)]">Inventaris Komoditas</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SectionBlock
-            icon="grain"
-            title="Pertanian & Kebun"
-            bgClass="bg-emerald-50/60 border-emerald-100"
-            titleClass="text-emerald-700"
-          >
-            <InfoRow label="Komoditas Pertanian" value={d["Komoditas Pertanian"]} />
-            <InfoRow label="Jenis Tanaman" value={d["Jenis Tanaman"]} />
-            {d["Produksi Padi (ton/ha)"] && (
-              <div>
-                <span className="label-caps text-emerald-600">Produksi Padi</span>
-                <div className="mt-1.5 flex items-center gap-2">
-                  <div className="flex-1 bg-white rounded-full h-2 border border-emerald-100">
-                    <div
-                      className="h-2 rounded-full bg-emerald-500"
-                      style={{
-                        width: `${Math.min(
-                          (Number(d["Produksi Padi (ton/ha)"]) / 8) * 100,
-                          100
-                        )}%`,
-                      }}
-                    />
-                  </div>
-                  <span className="micro-copy text-emerald-700 font-semibold shrink-0">
-                    {d["Produksi Padi (ton/ha)"]} ton/ha
-                  </span>
-                </div>
-              </div>
-            )}
-            <InfoRow label="Komoditas Perkebunan" value={d["Komoditas Perkebunan"]} />
-          </SectionBlock>
-
-          <SectionBlock
-            icon="set_meal"
-            title="Peternakan & Perikanan"
-            bgClass="bg-blue-50/60 border-blue-100"
-            titleClass="text-blue-700"
-          >
-            <InfoRow label="Hewan Ternak" value={d["Jenis Hewan Ternak"]} />
-            <InfoRow label="Ikan Ternak" value={d["Jenis Ikan Ternak"]} />
-            <InfoRow label="Sistem Budidaya" value={d["Sistem Budidaya Ikan"]} />
-          </SectionBlock>
-        </div>
-      </div>
-
-      {/* ── Infrastruktur & Ekonomi ─────────────────────────────────────────── */}
+      {/* ── Production Hub — full-width, hero section (potensi_modal.md §1) ──── */}
       <SectionBlock
-        icon="bolt"
-        title="Infrastruktur & Ekonomi"
-        bgClass="bg-[var(--surface-container-low)] border-[var(--outline-variant)]/60"
-        titleClass="text-[var(--secondary)]"
+        icon="grain"
+        title="Pertanian & Kebun — Production Hub"
+        bgClass="bg-emerald-50/60 border-emerald-100"
+        titleClass="text-emerald-700"
       >
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <InfoRow label="Komoditas Pertanian" value={d["Komoditas Pertanian"]} />
+          <InfoRow label="Jenis Tanaman" value={d["Jenis Tanaman"]} />
+          <InfoRow label="Komoditas Perkebunan" value={d["Komoditas Perkebunan"]} />
+        </div>
+        {d["Produksi Padi (ton/ha)"] && (
+          <div>
+            <span className="label-caps text-emerald-600">Produksi Padi</span>
+            <div className="mt-1.5 flex items-center gap-2">
+              <div className="flex-1 bg-white rounded-full h-2 border border-emerald-100">
+                <div
+                  className="h-2 rounded-full bg-emerald-500"
+                  style={{
+                    width: `${Math.min(
+                      (Number(d["Produksi Padi (ton/ha)"]) / 8) * 100,
+                      100
+                    )}%`,
+                  }}
+                />
+              </div>
+              <span className="micro-copy text-emerald-700 font-semibold shrink-0">
+                {d["Produksi Padi (ton/ha)"]} ton/ha
+              </span>
+            </div>
+          </div>
+        )}
+      </SectionBlock>
+
+      {/* ── Inventaris Sekunder — Peternakan & Infrastruktur sejajar ──────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <SectionBlock
+          icon="set_meal"
+          title="Peternakan & Perikanan"
+          bgClass="bg-blue-50/60 border-blue-100"
+          titleClass="text-blue-700"
+        >
+          <InfoRow label="Hewan Ternak" value={d["Jenis Hewan Ternak"]} />
+          <InfoRow label="Ikan Ternak" value={d["Jenis Ikan Ternak"]} />
+          <InfoRow label="Sistem Budidaya" value={d["Sistem Budidaya Ikan"]} />
+        </SectionBlock>
+
+        <SectionBlock
+          icon="bolt"
+          title="Infrastruktur & Ekonomi"
+          bgClass="bg-[var(--surface-container-low)] border-[var(--outline-variant)]/60"
+          titleClass="text-[var(--secondary)]"
+        >
           <InfoRow label="Energi Terbarukan" value={d["Energi Terbarukan"]} icon="solar_power" />
           <InfoRow label="Agrowisata" value={d["Potensi Agrowisata"]} icon="park" />
           <InfoRow label="Kerajinan Lokal" value={d["Kerajinan Lokal"]} icon="handyman" />
-        </div>
-      </SectionBlock>
+        </SectionBlock>
+      </div>
 
-      {/* ── Actionable Insights (DESIGN_SYS.md: Error/Success Containers) ─────── */}
-      <div className="space-y-3">
-        {/* Ancaman — Error Container */}
+      {/* ── Insight Layer — 2 kolom semantik (potensi_modal.md §1 & §3) ────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Ancaman — Error Container (Rose) */}
         <div className="bg-[var(--error-container)] border border-rose-200 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
             <Icon name="warning" size={16} className="text-[var(--on-error-container)]" />
@@ -222,7 +254,7 @@ export default function PotensiModal({ data }: { data: Record<string, unknown> }
           </p>
         </div>
 
-        {/* Rekomendasi — Success Container */}
+        {/* Rekomendasi — Success Container (Emerald) */}
         <div className="bg-[var(--success-container)] border border-emerald-200 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
             <Icon name="lightbulb" size={16} className="text-[var(--on-success-container)]" />
